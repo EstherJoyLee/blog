@@ -1,0 +1,145 @@
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 5px #0000001a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  z-index: 100;
+  height: 68px;
+  .nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+
+    ul {
+      display: flex;
+      gap: 15px;
+
+      li {
+        list-style: none;
+        margin-right: 20px;
+        &:last-of-type {
+          margin-right: 0;
+        }
+
+        a {
+          text-decoration: none;
+          color: #333;
+          font-weight: bold;
+          transition: color 0.3s;
+          font-size: 1.6rem;
+
+          &:hover {
+            color: #0070f3;
+          }
+        }
+      }
+    }
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .profileImage {
+        $profile-img-w: 32px;
+        position: relative;
+        width: $profile-img-w;
+        height: $profile-img-w;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      h1 {
+        font-size: 1rem;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .loginBar {
+    display: flex;
+    align-items: center;
+
+    .list {
+      display: flex;
+      gap: 10px;
+
+      .item {
+        list-style: none;
+
+        a {
+          text-decoration: none;
+          color: #333;
+          font-weight: bold;
+          transition: color 0.3s;
+          font-size: 0.8rem;
+
+          &:hover {
+            color: #0070f3;
+          }
+        }
+      }
+    }
+  }
+
+  .hambuger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+
+    span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: #333;
+      transition: 0.3s;
+    }
+  }
+}
+
+.darkHeader {
+  background: #1a1a1a;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+
+  .nav ul li a {
+    color: #ddd;
+
+    &:hover {
+      color: #0af;
+    }
+  }
+
+  .loginBar .list .item a {
+    color: #fff;
+
+    &:hover {
+      color: #0af;
+    }
+  }
+
+  .hambuger span {
+    background: #ddd;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+
+  .hambuger {
+    display: flex;
+  }
+}
