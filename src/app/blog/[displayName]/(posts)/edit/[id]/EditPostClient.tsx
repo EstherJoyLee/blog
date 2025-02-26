@@ -16,8 +16,9 @@ import Input from "@/components/FormLayout/Input/Input";
 import FolderSelect from "@/components/folders/FolderSelect";
 import { selectFolderList } from "@/redux/slice/folderSlice";
 import useFetchFolders from "@/hooks/useFetchFolders";
+import { useParams } from "next/navigation";
 
-const EditPostClient = ({ postId }: { postId: string }) => {
+const EditPostClient = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -28,6 +29,9 @@ const EditPostClient = ({ postId }: { postId: string }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const blogUrl = useGetBlogNameFromUrl();
+
+  const params = useParams(); // ✅ 클라이언트에서 params 가져오기
+  const postId = params?.id as string;
 
   // ✅ 폴더 목록 가져오기
   useFetchFolders();
@@ -131,7 +135,11 @@ const EditPostClient = ({ postId }: { postId: string }) => {
   };
 
   const { mounted } = useMountedTheme();
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  } else if (!postId || typeof postId !== "string") {
+    return <h1>잘못된 접근입니다.</h1>;
+  }
 
   return (
     <FormLayout title="게시물 수정" isPost>

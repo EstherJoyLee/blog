@@ -8,6 +8,12 @@
   border-bottom: 2px solid #161d27;
 }
 
+@media screen and (max-width: 480px) {
+  .commonTitle {
+    font-size: 28px;
+  }
+}
+
 .dark .commonTitle {
   color: #e5e7eb;
   border-color: #e5e7eb;
