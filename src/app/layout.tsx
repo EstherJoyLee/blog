@@ -8,8 +8,17 @@ import Content from "@/components/content/Content";
 import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 
 export const metadata: Metadata = {
-  title: "JoyLog",
-  description: "Blog Web Application which Generated PinkRabbit",
+  // ✅ 기본 정보 (SEO 최적화)
+  title: "JoyLog - Dev & Life Blog",
+  description: "PinkRabbit이 만든 개발 및 라이프 블로그. 최신 기술과 개발 일상을 공유합니다.",
+
+
+
+  // ✅ Robots (검색 엔진 크롤링 제어)
+  robots: {
+    index: true, // 🔹 검색 엔진 색인 허용
+    follow: true, // 🔹 링크 따라가기 허용
+  },
 };
 
 export default function RootLayout({
