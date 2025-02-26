@@ -16,7 +16,7 @@ export const roboto = Roboto({
 
 // 🌐 Noto Sans KR (한글 본문용)
 export const notoSansKR = Noto_Sans_KR({
-  subsets: ["latin", "korean"] as const,
+  subsets: ["latin"],
   weight: ["300", "400", "700"],
   variable: "--font-noto-sans-kr",
 });
