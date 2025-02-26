@@ -1,8 +1,11 @@
+@use "sass:map"; // ✅ 최신 Sass에서는 map 모듈을 import 해야 함
 @use "@/styles/variables" as *;
 
 @mixin respond($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (max-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    // ✅ 최신 문법 사용
+    @media (max-width: map.get($breakpoints, $breakpoint)) {
+      // ✅ 최신 문법 사용
       @content;
     }
   } @else {

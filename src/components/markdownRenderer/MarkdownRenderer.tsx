@@ -16,10 +16,16 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       rehypePlugins={[rehypeRaw, rehypeHighlight]}
       components={{
         h1: ({ ...props }) => (
-          <h1 className="text-3xl font-bold text-lime-500" {...props} />
+          <h1
+            className="text-3xl sm:text-2xl font-bold text-lime-500"
+            {...props}
+          />
         ),
         h2: ({ ...props }) => (
-          <h2 className="text-2xl font-semibold text-blue-500" {...props} />
+          <h2
+            className="text-2xl sm:text-xl font-semibold text-blue-500"
+            {...props}
+          />
         ),
         h3: ({ ...props }) => (
           <h3 className="text-xl font-semibold text-cyan-500" {...props} />
