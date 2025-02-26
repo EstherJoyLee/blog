@@ -12,7 +12,17 @@ import { useEffect, useState } from "react";
 
 const useFetchPostsByFolder = (folderId: string) => {
   const currentUser = auth.currentUser; // 현재 사용자 정보 가져오기 (현재 사용자의 인증 정보 필요)
-  const [posts, setPosts] = useState<any[]>([]);
+  interface Post {
+    id?: string;
+    title?: string;
+    content?: string;
+    createdAt?: Date;
+    isPublic?: boolean;
+    authorUid?: string;
+    folderId?: string;
+  }
+
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const blogUrl = useGetBlogNameFromUrl();
 

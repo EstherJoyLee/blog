@@ -5,19 +5,12 @@ import emailjs from "emailjs-com";
 import FormLayout from "@/components/FormLayout/FormLayout";
 import Input from "@/components/FormLayout/Input/Input";
 import { Button } from "@mui/material";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
 
 const ContactForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [blogOwnerEmail, setBlogOwnerEmail] = useState("");
   const blogUrl = useGetBlogNameFromUrl();
   const [formData, setFormData] = useState({
@@ -59,12 +52,12 @@ const ContactForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    // setIsLoading(true);
     console.log("blogOwnerEmail: ", blogOwnerEmail);
 
     if (!blogOwnerEmail) {
       alert("블로그 주인의 이메일을 찾을 수 없습니다.");
-      setIsLoading(false);
+      // setIsLoading(false);
       return;
     }
 
@@ -78,26 +71,26 @@ const ContactForm = () => {
 
     emailjs
       .send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID, // EmailJS 대시보드에서 확인한 Service ID
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID, // EmailJs 대시보드에서 확인한 Template ID
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "", // EmailJS 대시보드에서 확인한 Service ID
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "", // EmailJs 대시보드에서 확인한 Template ID
         emailData,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY // EmailJS 대시보드에서 확인한 Public Key
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "" // EmailJS 대시보드에서 확인한 Public Key
       )
       .then(
         (response) => {
-          // console.log("SUCCESS!", response.status, response.text);
+          console.log("SUCCESS!", response.status, response.text);
           alert("이메일이 성공적으로 전송되었습니다.");
           setFormData({
             from_name: "",
             email: "",
             message: "",
           });
-          setIsLoading(false);
+          // setIsLoading(false);
         },
         (error) => {
-          // console.log("FAILED...", error);
+          console.log("FAILED...", error);
           alert("이메일 전송에 실패했습니다.");
-          setIsLoading(false);
+          // setIsLoading(false);
         }
       );
   };

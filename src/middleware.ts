@@ -35,7 +35,7 @@ export function middleware(req: NextRequest) {
         return NextResponse.next();
       })
       .catch((error) => {
-        // console.error("🔴 Middleware API Error:", error);
+        console.error("🔴 Middleware API Error:", error);
         return NextResponse.redirect(new URL("/not-allowed", req.url));
       });
   }

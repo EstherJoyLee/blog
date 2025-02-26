@@ -34,6 +34,25 @@
       flex-grow: 1;
     }
   }
+  .seeMoreBtn {
+    display: block;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    text-align: center;
+    transition: 0.2s;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 .darkPostListWrapper {
   .postListItem {
@@ -44,5 +63,8 @@
         color: #13ff75;
       }
     }
+  }
+  .seeMoreBtn {
+    background: rgba(255, 255, 255, 0.1);
   }
 }

@@ -9,12 +9,12 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import styles from "./Login.module.scss";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getUniqueBlogUrl } from "@/utils/blogUrlService";
 import FormLayout from "@/components/FormLayout/FormLayout";
 import Input from "@/components/FormLayout/Input/Input";
 import CustomButton from "@/components/FormLayout/Button/Button";
+import { FirebaseError } from "firebase/app";
 
 const LoginClient = () => {
   const [email, setEmail] = useState("");
@@ -51,7 +51,7 @@ const LoginClient = () => {
         alert("로그인 성공!");
         redirectUser(blogUrl); // ✅ 로그인 성공 후 블로그 페이지로 이동
       }
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
       handleAuthError(err);
       router.push("/");
@@ -77,7 +77,7 @@ const LoginClient = () => {
       setIsLoading(false);
       alert(`로그인 성공! 블로그 주소: ${blogUrl}`);
       redirectUser(blogUrl); // ✅ 로그인 성공 후 블로그 페이지로 이동
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
       handleAuthError(err);
       router.push("/");
@@ -85,8 +85,9 @@ const LoginClient = () => {
   };
 
   // ✅ 공통 에러 처리 함수
-  const handleAuthError = (err: any) => {
-    switch (err.code) {
+  const handleAuthError = (err: unknown) => {
+    const firebaseError = err as FirebaseError;
+    switch (firebaseError.code) {
       case "auth/invalid-credential":
         setError("유효하지 않은 이메일 또는 비밀번호 입니다.");
         break;
@@ -110,7 +111,7 @@ const LoginClient = () => {
         break;
       default:
         setError("");
-        console.error("로그인 에러:", err.message);
+        console.error("로그인 에러:", firebaseError.message);
     }
   };
 

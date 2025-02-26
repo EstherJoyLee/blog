@@ -19,6 +19,6 @@ export interface IFolderProps {
     blogUrl: string;
   }[];
   selectedFolder?: string | null;
-  postsByFolder?: Record<string, any[]>;
+  postsByFolder?: Record<string, IPostState[]>;
   searchQuery?: string;
 }

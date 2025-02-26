@@ -1,8 +1,8 @@
 "use client";
 
-import { auth, db, storage } from "@/firebase/config";
+import { auth, db } from "@/firebase/config";
 import { getUniqueBlogUrl } from "@/utils/blogUrlService";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   doc,
   setDoc,
@@ -11,27 +11,25 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useCallback, useEffect, useState } from "react";
-import styles from "./SignUp.module.scss";
 import FormLayout from "@/components/FormLayout/FormLayout";
 import Input from "@/components/FormLayout/Input/Input";
 import TermsAgreement from "@/components/termsAgreement/TermsAgreement";
 import CustomButton from "@/components/FormLayout/Button/Button";
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
 
 const SignupClient = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [nickName, setNickName] = useState("");
-  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
-  const [error, setError] = useState("");
-  const [emailAvailable, setEmailAvailable] = useState(true);
+  // const [error, alert] = useState("");
+  // const [emailAvailable, setEmailAvailable] = useState(true);
   const [blogUrl, setBlogUrl] = useState("");
-  const [isUrlAvailable, setIsUrlAvailable] = useState(true);
+  // const [isUrlAvailable, setIsUrlAvailable] = useState(true);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -46,12 +44,12 @@ const SignupClient = () => {
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      setIsUrlAvailable(false);
+      // setIsUrlAvailable(false);
       setBlogUrlError(
         "이미 존재하는 블로그 주소입니다. 다른 주소를 입력해주세요."
       );
     } else {
-      setIsUrlAvailable(true);
+      // setIsUrlAvailable(true);
       setBlogUrlError(""); // 중복이 없으면 에러 메시지 제거
     }
   };
@@ -62,11 +60,11 @@ const SignupClient = () => {
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        setEmailAvailable(false);
+        // setEmailAvailable(false);
         setEmailError("이 이메일은 이미 사용 중입니다.");
         return true;
       } else {
-        setEmailAvailable(true);
+        // setEmailAvailable(true);
         setEmailError("");
         return false;
       }
@@ -82,7 +80,7 @@ const SignupClient = () => {
     // ✅ Firebase Authentication에서 이메일이 이미 있는지 검사
     const emailExists = await checkEmailExistsInAuth(email);
     if (emailExists) {
-      setError("이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.");
+      alert("이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.");
       return;
     }
 
@@ -123,16 +121,21 @@ const SignupClient = () => {
           "🗑️ Firestore 저장 실패로 인해 Authentication 사용자 삭제됨"
         );
 
-        setError("회원가입 중 문제가 발생했습니다. 다시 시도해주세요.");
+        alert("회원가입 중 문제가 발생했습니다. 다시 시도해주세요.");
         return;
       }
 
       alert("회원가입이 완료되었습니다.");
       router.push(`/blog/${blogUrl}`);
-    } catch (err: any) {
-      console.error("🚨 Firebase 오류:", err.code, err.message);
-      setError(err.message);
-      alert(err.message);
+    } catch (err: unknown) {
+      const firebaseError = err as FirebaseError;
+      console.error(
+        "🚨 Firebase 오류:",
+        firebaseError.code,
+        firebaseError.message
+      );
+      alert(firebaseError.message);
+      alert(firebaseError.message);
     }
   };
 
@@ -145,14 +148,15 @@ const SignupClient = () => {
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        setEmailAvailable(false);
+        // setEmailAvailable(false);
         setEmailError("이 이메일은 이미 사용 중입니다.");
       } else {
-        setEmailAvailable(true);
+        // setEmailAvailable(true);
         setEmailError(""); // 이메일 사용 가능 시 에러 제거
       }
     } catch (err) {
-      setEmailError("이메일 중복 확인 중 오류가 발생했습니다.");
+      if (err instanceof Error)
+        setEmailError("이메일 중복 확인 중 오류가 발생했습니다.");
     }
   }, []);
 
