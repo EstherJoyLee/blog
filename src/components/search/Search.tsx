@@ -1,5 +1,8 @@
 import React from "react";
 import { TextField } from "@mui/material";
+import styles from "./Search.module.scss";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
+import { setThemeClass } from "@/utils/setThemeClass";
 
 interface ISearchProps {
   searchQuery: string;
@@ -11,6 +14,12 @@ const Search: React.FC<ISearchProps> = ({ searchQuery, setSearchQuery }) => {
     setSearchQuery(event.target.value); // Update search query state
   };
 
+  const { theme, mounted } = useMountedTheme();
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div>
       <TextField
@@ -19,6 +28,7 @@ const Search: React.FC<ISearchProps> = ({ searchQuery, setSearchQuery }) => {
         onChange={handleSearchChange}
         variant="outlined"
         fullWidth
+        className={`${setThemeClass(theme, styles.darkSearch, styles.search)}`}
       />
     </div>
   );

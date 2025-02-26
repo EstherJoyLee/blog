@@ -1,16 +1,70 @@
-.darkBackground {
-  background: linear-gradient(to bottom, #000, #1a1a1a);
-  color: #fff;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
-  .glassButton {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+.heroSection {
+  position: relative;
+  overflow: hidden;
+  background: $primary-gradient;
+  color: $dark-primary;
+
+  .videoBackground {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    object-fit: cover;
+    filter: brightness(1.2);
+    transition: transform 0.2s ease-out;
   }
-}
 
-.lightBackground {
-  background: linear-gradient(to bottom, #fff, #f5f5f5);
-  color: #000;
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(
+      255,
+      255,
+      255,
+      0.1
+    ); // ✅ 가독성을 높이기 위한 오버레이 추가
+  }
+
+  .heroTexts {
+    z-index: 1;
+
+    .heading {
+      text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.1);
+      font-size: 4rem;
+      white-space: break-spaces;
+
+      @include respond(md) {
+        font-size: 3rem;
+      }
+
+      @include respond(sm) {
+        font-size: 2.5rem;
+      }
+    }
+    .paragraph {
+      font-size: 2rem;
+      text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.1);
+
+      @include respond(md) {
+        font-size: 1.75rem;
+      }
+
+      @include respond(sm) {
+        font-size: 1.5rem;
+      }
+    }
+    .glassButton {
+      margin-top: 20px;
+    }
+  }
 }
 
 .glassButton {
@@ -21,11 +75,31 @@
   border-radius: 10px;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #000;
+  color: #1f2937;
   transition: all 0.3s ease-in-out;
+
+  @include respond(md) {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+  }
+
+  @include respond(md) {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
 
   &:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: scale(1.05);
+  }
+}
+
+.darkHeroSection {
+  background: $dark-gradient;
+  color: #fff;
+
+  .glassButton {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
   }
 }

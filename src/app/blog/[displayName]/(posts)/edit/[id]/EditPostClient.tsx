@@ -1,16 +1,21 @@
 "use client";
 
 import { auth, db } from "@/firebase/config";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setPublicUrl } from "@/redux/slice/imageSlice";
 import { supabase } from "@/supabase/config";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
 import uploadImage from "@/utils/uploadImage";
 import { Button } from "@mui/material";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import FormLayout from "@/components/FormLayout/FormLayout";
+import Input from "@/components/FormLayout/Input/Input";
+import FolderSelect from "@/components/folders/FolderSelect";
+import { selectFolderList } from "@/redux/slice/folderSlice";
+import useFetchFolders from "@/hooks/useFetchFolders";
 
 const EditPostClient = ({ postId }: { postId: string }) => {
   const [title, setTitle] = useState("");
@@ -18,10 +23,17 @@ const EditPostClient = ({ postId }: { postId: string }) => {
   const [image, setImage] = useState<File | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
+  const [selectedFolder, setSelectedFolder] = useState<string>("");
+
   const dispatch = useDispatch();
   const router = useRouter();
   const blogUrl = useGetBlogNameFromUrl();
 
+  // ✅ 폴더 목록 가져오기
+  useFetchFolders();
+  const folders = useSelector(selectFolderList);
+
+  // ✅ Firestore에서 기존 게시물 데이터 가져오기
   useEffect(() => {
     const fetchPost = async () => {
       const postRef = doc(db, "posts", postId);
@@ -32,6 +44,7 @@ const EditPostClient = ({ postId }: { postId: string }) => {
         setContent(postData.content);
         setIsPublic(postData.isPublic);
         setCurrentImageUrl(postData.imageUrl);
+        setSelectedFolder(postData.folderId || ""); // ✅ 기존 폴더 ID 설정
       } else {
         alert("게시물을 찾을 수 없습니다.");
       }
@@ -40,17 +53,10 @@ const EditPostClient = ({ postId }: { postId: string }) => {
     fetchPost();
   }, [postId]);
 
+  // ✅ 게시물 수정 함수
+  console.log("image: ", image);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!title || !content) {
-      alert("제목과 내용은 필수 입력 항목입니다.");
-      return;
-    }
-    if (image && !currentImageUrl) {
-      alert("이미지를 업로드해 주세요.");
-      return;
-    }
 
     try {
       const user = auth.currentUser;
@@ -59,7 +65,7 @@ const EditPostClient = ({ postId }: { postId: string }) => {
         throw new Error("사용자가 로그인하지 않았습니다.");
       }
 
-      let imageUrl = currentImageUrl; // 기존 이미지를 유지
+      let imageUrl = currentImageUrl; // 기존 이미지 유지
       if (image) {
         const uploadedUrl = await uploadImage(image, "postImages", "images/");
         if (uploadedUrl) {
@@ -74,16 +80,27 @@ const EditPostClient = ({ postId }: { postId: string }) => {
         content,
         imageUrl,
         isPublic,
+        folderId: selectedFolder, // ✅ 폴더 선택 변경 사항 반영
         updatedAt: new Date(),
       });
 
+      if (!title || !content) {
+        alert("제목과 내용은 필수 입력 항목입니다.");
+        return;
+      }
+      if (image && !imageUrl) {
+        alert("이미지를 업로드해 주세요.");
+        return;
+      }
+
       alert("게시물이 성공적으로 수정되었습니다.");
-      router.push(`/blog/${blogUrl}/post`); // 게시물 목록 페이지로 리디렉션
+      router.push(`/blog/${blogUrl}/post`);
     } catch (error) {
       console.error("게시물 수정 중 오류 발생:", error);
     }
   };
 
+  // ✅ 이미지 삭제 기능
   const handleDeleteImage = async () => {
     if (!currentImageUrl) {
       alert("삭제할 이미지가 없습니다.");
@@ -113,69 +130,59 @@ const EditPostClient = ({ postId }: { postId: string }) => {
     }
   };
 
+  const { mounted } = useMountedTheme();
+  if (!mounted) return null;
+
   return (
-    <>
-      <h1>게시물 수정</h1>
+    <FormLayout title="게시물 수정" isPost>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>제목</label>
-          <input
-            type="text"
-            placeholder="제목"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+        <Input
+          type="text"
+          placeholder="제목"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          isRequired
+          label="제목 수정"
+        />
+        <Input
+          type="text"
+          placeholder="내용"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          isRequired
+          label="내용 수정"
+        />
+
+        <Input
+          type="file"
+          label="이미지 수정"
+          isEditMode={true} // ✅ 수정 모드일 때만 동작
+          currentImageUrl={currentImageUrl} // ✅ 현재 이미지 URL
+          setImage={setImage} // ✅ 이미지 변경 핸들러
+          handleDeleteImage={handleDeleteImage} // ✅ 이미지 삭제 핸들러
+        />
+
+        <Input
+          type="checkbox"
+          checked={isPublic}
+          onChange={(e) => setIsPublic((e.target as HTMLInputElement).checked)}
+          label="공개 여부 수정"
+        />
+
+        {/* ✅ 폴더 선택 UI 추가 */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <FolderSelect
+            selectedFolder={selectedFolder}
+            setSelectedFolder={setSelectedFolder}
+            folders={folders}
           />
         </div>
 
-        <div>
-          <label>내용</label>
-          <textarea
-            placeholder="내용"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          ></textarea>
-        </div>
-
-        <div>
-          <label>이미지 수정</label>
-          <input
-            type="file"
-            onChange={(e) => setImage(e.target.files?.[0] || null)}
-          />
-          {currentImageUrl ? (
-            <div>
-              <Image
-                alt={`${title} 이미지`}
-                src={currentImageUrl}
-                width={300}
-                height={200}
-                style={{ objectFit: "cover" }}
-              />
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleDeleteImage}
-              >
-                이미지 삭제
-              </Button>
-            </div>
-          ) : (
-            <p>이미지를 불러올 수 없습니다.</p>
-          )}
-        </div>
-
-        <div>
-          <label>공개 여부</label>
-          <input
-            type="checkbox"
-            checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
-          />
-        </div>
-
-        <Button type="submit">수정</Button>
+        <Button variant="contained" type="submit">
+          수정
+        </Button>
       </form>
-    </>
+    </FormLayout>
   );
 };
 

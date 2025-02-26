@@ -3,9 +3,9 @@ import "@/styles/globals.css";
 import Header from "@/layouts/header/Header";
 import Providers from "@/redux/Providers";
 import Footer from "@/layouts/footer/Footer";
-import Aside from "@/layouts/aside/Aside";
-import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 import { spaceGrotesk, roboto, notoSansKR } from "@/styles/font";
+import Content from "@/components/content/Content";
+import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 
 export const metadata: Metadata = {
   title: "JoyLog",
@@ -23,17 +23,14 @@ export default function RootLayout({
         className={`${spaceGrotesk.className} ${roboto.className} ${notoSansKR.className} bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
       >
         {/* <CheckError /> */}
-
-        <Providers>
-          <Header />
-          <main>
-            <Aside />
-
-            {children}
+        <div id="wrap">
+          <Providers>
+            <Header />
+            <Content>{children}</Content>
             <ThemeToggle />
-          </main>
-          <Footer />
-        </Providers>
+            <Footer />
+          </Providers>
+        </div>
       </body>
     </html>
   );

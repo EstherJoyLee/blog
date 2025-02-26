@@ -1,11 +1,21 @@
 "use client";
 
+import { useMountedTheme } from "@/hooks/useMountedTheme";
 import styles from "./Footer.module.scss";
-import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { setThemeClass } from "@/utils/setThemeClass";
 
 export default function Footer() {
+  const { theme, mounted } = useMountedTheme();
+
+  if (!mounted) {
+    return null; // ✅ 마운트되기 전에는 아무것도 렌더링하지 않음 (Hydration mismatch 방지)
+  }
+
   return (
-    <footer className={styles.footer}>
+    <footer
+      className={`${setThemeClass(theme, styles.darkFooter, styles.footer)}`}
+    >
       <div className={styles.content}>
         <h2 className={styles.logo}>블로그</h2>
         <nav className={styles.nav}>
@@ -16,18 +26,18 @@ export default function Footer() {
         </nav>
         <div className={styles.socials}>
           <a
-            href="https://github.com/EstherJoyLee"
+            href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
           >
             <FaGithub />
           </a>
           <a
-            href="https://www.instagram.com/hello_world_joy"
+            href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <FaInstagram />
+            <FaTwitter />
           </a>
           <a
             href="https://linkedin.com"

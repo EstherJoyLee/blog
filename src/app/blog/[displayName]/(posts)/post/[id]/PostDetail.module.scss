@@ -1,3 +1,43 @@
-.postTitle {
-  font-size: 50px;
+@use "@/styles/variables" as *;
+
+.postDetail {
+  img {
+    width: auto;
+  }
+  .postTitle {
+    font-size: 36px;
+    color: $dark-second;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid $dark-second;
+
+    .btnGroup {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+  p {
+    padding: 20px 0;
+  }
+
+  .commonBtn {
+    background: $dark-primary;
+    margin-top: 20px;
+    padding: 10px;
+    color: $primary;
+    font-size: 0.8rem;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.darkPostDetail {
+  .postTitle {
+    color: $primary;
+    border-color: $primary;
+  }
 }

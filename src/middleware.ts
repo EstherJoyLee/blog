@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-console.log("🤢😡😤 Middleware Loaded!");
+// console.log("🤢😡😤 Middleware Loaded!");
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const userId = req.cookies.get("userId")?.value; // 🔥 userId 쿠키를 가져옴
   const pathSegments = pathname.split("/").filter(Boolean);
 
-  console.log(`[Middleware] 요청 URL: ${pathname}, userId: ${userId}`);
+  // console.log(`[Middleware] 요청 URL: ${pathname}, userId: ${userId}`);
 
   if (
     pathSegments.length >= 3 &&
@@ -15,7 +15,7 @@ export function middleware(req: NextRequest) {
     (pathSegments[2] === "edit" || pathSegments[2] === "create")
   ) {
     if (!userId) {
-      console.log(`[Middleware] 접근 차단 (로그인 필요) -> ${pathname}`);
+      // console.log(`[Middleware] 접근 차단 (로그인 필요) -> ${pathname}`);
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
@@ -29,13 +29,13 @@ export function middleware(req: NextRequest) {
       .then((res) => res.json())
       .then((data) => {
         if (!data.isOwner) {
-          console.log(`[Middleware] 접근 차단 (잘못된 계정) -> ${pathname}`);
+          // console.log(`[Middleware] 접근 차단 (잘못된 계정) -> ${pathname}`);
           return NextResponse.redirect(new URL("/not-allowed", req.url));
         }
         return NextResponse.next();
       })
       .catch((error) => {
-        console.error("🔴 Middleware API Error:", error);
+        // console.error("🔴 Middleware API Error:", error);
         return NextResponse.redirect(new URL("/not-allowed", req.url));
       });
   }

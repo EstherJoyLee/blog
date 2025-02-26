@@ -1,8 +1,15 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { FaPencilAlt, FaPalette, FaSearch, FaBolt } from "react-icons/fa";
+import {
+  FaPencilAlt,
+  FaPalette,
+  FaSearch,
+  FaBolt,
+  FaTag,
+} from "react-icons/fa";
 import styles from "./FeatureSection.module.scss";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
+import { setThemeClass } from "@/utils/setThemeClass";
 
 const features = [
   {
@@ -21,18 +28,27 @@ const features = [
     description: "검색 엔진 친화적인 블로그",
   },
   { icon: <FaBolt />, title: "강력한 성능", description: "빠르고 최적화된 UX" },
+  {
+    icon: <FaTag />,
+    title: "Markdown 지원",
+    description: "Markdown 문법을 사용한 쉽고 빠른 텍스트 포맷팅",
+  },
 ];
 
-console.log("SCSS 모듈 확인: ", styles);
-
 export default function FeatureSection() {
-  const { theme } = useTheme();
+  const { theme, mounted } = useMountedTheme();
+
+  if (!mounted) {
+    return null; // ✅ 마운트되기 전에는 아무것도 렌더링하지 않음 (Hydration mismatch 방지)
+  }
 
   return (
     <section
-      className={`${styles.featureSection} ${
-        theme === "dark" ? styles.dark : styles.light
-      }`}
+      className={`${setThemeClass(
+        theme,
+        styles.darkFeatureSection,
+        styles.featureSection
+      )}`}
     >
       <h2 className={styles.title}>블로그 서비스 주요 기능</h2>
       <div className={styles.featuresContainer}>

@@ -1,110 +1,73 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { db } from "@/firebase/config";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-  where,
-} from "firebase/firestore";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { IPostState } from "@/types";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
+import useFetchBlogPosts from "@/hooks/useFetchBlogPosts";
+import { setThemeClass } from "@/utils/setThemeClass";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
+import styles from "./HomeClient.module.scss";
+import Loader from "@/components/loader/Loader";
 
 const HomeClient = () => {
-  const [posts, setPosts] = useState<IPostState[]>([]); // 최신 게시물 목록
-  const [isBlogName, setIsBlogName] = useState(true);
   const router = useRouter();
   const blogUrl = useGetBlogNameFromUrl();
+  const { posts, isLoading, isValidBlog } = useFetchBlogPosts(blogUrl, 10);
 
-  useEffect(() => {
-    if (blogUrl === "undefined") {
-      setIsBlogName(false);
-    } else {
-      setIsBlogName(true);
-    }
-
-    const fetchPosts = async () => {
-      try {
-        const userCollection = collection(db, "users");
-        const userQuery = query(
-          userCollection,
-          where("blogUrl", "==", blogUrl)
-        );
-        const userSnapshot = await getDocs(userQuery);
-
-        if (userSnapshot.empty) {
-          console.log("해당 블로그 URL을 가진 사용자가 없습니다.");
-          setPosts([]);
-          return;
-        }
-
-        const authorUid = userSnapshot.docs[0].id;
-        const postsCollection = collection(db, "posts");
-
-        // 최신순으로 최대 10개 게시물 가져오기
-        const postsQuery = query(
-          postsCollection,
-          where("authorUid", "==", authorUid),
-          orderBy("createdAt", "desc"),
-          limit(10)
-        );
-
-        const postSnapshot = await getDocs(postsQuery);
-        const postList: IPostState[] = postSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          title: doc.data().title,
-          content: doc.data().content,
-          imageUrl: doc.data().imageUrl,
-          isPublic: doc.data().isPublic,
-          authorUid: doc.data().authorUid,
-          createdAt: doc.data().createdAt || new Date(),
-        }));
-
-        setPosts(postList);
-      } catch (error) {
-        console.error("게시물 가져오기 오류:", error);
-      }
-    };
-
-    fetchPosts();
-  }, [blogUrl]);
+  // console.log("😡😡isValidBlog: ", isValidBlog);
 
   const handleView = (postId: string) => {
     router.push(`/blog/${blogUrl}/post/${postId}`);
   };
 
+  const { theme, mounted } = useMountedTheme();
+
+  useEffect(() => {
+    if (!mounted) return;
+  }, [mounted]);
+
   return (
     <>
-      {isBlogName ? (
-        <div>
-          <h1>최신 게시물</h1>
-          <div>
-            {posts.length > 0 ? (
+      {isValidBlog ? (
+        <div
+          className={`commonWrapper ${setThemeClass(
+            theme,
+            styles.darkPostWrapper,
+            styles.postWrapper
+          )}`}
+        >
+          <h1 className="commonTitle">최신 게시물</h1>
+          <div className={`commonContent ${styles.postContent}`}>
+            {isLoading ? (
+              <Loader />
+            ) : posts.length > 0 ? (
               posts.map((post) => (
-                <div key={post.id} style={{ marginBottom: "20px" }}>
+                <div key={post.id} className={styles.postItem}>
+                  <div className={styles.postImage}>
+                    <Image
+                      alt={`${post.title} 이미지`}
+                      src={
+                        post.imageUrl && post.imageUrl.trim() !== ""
+                          ? post.imageUrl
+                          : "/images/default.jpeg"
+                      }
+                      width={200}
+                      height={200}
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </div>
                   <h2
                     onClick={() => handleView(post.id)}
                     style={{ cursor: "pointer" }}
                   >
                     {post.title}
                   </h2>
-                  <p>{post.content}</p>
-                  {post.imageUrl && (
-                    <div style={{ position: "relative", marginBottom: "10px" }}>
-                      <Image
-                        alt={`${post.title} 이미지`}
-                        src={post.imageUrl}
-                        width={200}
-                        height={200}
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                  )}
+                  {/* <p>{post.content}</p> */}
                 </div>
               ))
             ) : (

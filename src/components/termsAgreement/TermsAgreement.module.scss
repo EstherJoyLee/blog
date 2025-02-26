@@ -1,0 +1,32 @@
+.termsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.termsBox {
+  background-color: #f2f2f2;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  height: 120px; /* 스크롤 높이 조정 가능 */
+  overflow-y: auto; /* 내용이 넘치면 스크롤 생성 */
+  border: 1px solid #ccc;
+}
+
+.termsLabel {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.termsCheckbox {
+  margin-left: 10px; /* 체크박스를 텍스트와 분리 */
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

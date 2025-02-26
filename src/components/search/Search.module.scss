@@ -1,0 +1,16 @@
+.darkSearch {
+  label {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  label + div {
+    &:hover {
+      border-color: #fff;
+    }
+  }
+  input {
+    color: #fff;
+  }
+  fieldset {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}

@@ -1,17 +1,15 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
 .footer {
   position: relative;
   width: 100%;
   padding: 40px 20px;
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.15);
+  background: $primary;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   transition: background 0.3s ease-in-out;
-
-  html.dark & {
-    background: rgba(255, 255, 255, 0.1);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-  }
+  color: $dark-primary;
 }
 
 .content {
@@ -24,6 +22,10 @@
 .logo {
   font-size: 1.8rem;
   font-weight: bold;
+
+  @include respond(sm) {
+    font-size: 1.5rem;
+  }
 }
 
 .nav {
@@ -37,15 +39,10 @@
     transition: color 0.3s ease-in-out;
 
     &:hover {
-      color: #0070f3;
+      color: $primary-point;
     }
-
-    html.dark & {
-      color: white;
-
-      &:hover {
-        color: #0af;
-      }
+    @include respond(sm) {
+      font-size: 0.7rem;
     }
   }
 }
@@ -56,20 +53,12 @@
   font-size: 1.5rem;
 
   a {
-    color: #333;
+    color: $dark-primary;
     transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
 
     &:hover {
-      color: #0070f3;
+      color: $primary-point;
       transform: scale(1.2);
-    }
-
-    html.dark & {
-      color: white;
-
-      &:hover {
-        color: #0af;
-      }
     }
   }
 }
@@ -79,4 +68,28 @@
   margin-top: 20px;
   font-size: 0.9rem;
   opacity: 0.8;
+}
+
+.darkFooter {
+  background: $dark-primary;
+  border-top: 0;
+  color: #fff;
+  .nav {
+    a {
+      color: #fff;
+
+      &:hover {
+        color: $dark-point;
+      }
+    }
+  }
+
+  .socials {
+    a {
+      color: #fff;
+      &:hover {
+        color: $dark-point;
+      }
+    }
+  }
 }

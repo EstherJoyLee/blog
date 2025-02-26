@@ -1,0 +1,28 @@
+@use "../../styles/variables" as *;
+
+.formLayout {
+  max-width: 500px;
+  width: 100%;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  [class$="commonContent"] {
+    padding: 40px 0;
+  }
+}
+.formLayout.isPost {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.darkFormLayout {
+  input {
+    color: $dark-primary;
+  }
+  label {
+    color: #fff;
+  }
+}

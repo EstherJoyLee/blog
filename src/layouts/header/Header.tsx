@@ -16,7 +16,9 @@ import { useSelector } from "react-redux";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
 import { generateBlogUrl } from "@/utils/blogUrlService";
 import { doc, getDoc } from "firebase/firestore";
-import { useTheme } from "next-themes";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
+import { setThemeClass } from "@/utils/setThemeClass";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -25,7 +27,8 @@ const Header = () => {
   const userPhotoURL = useSelector(selectUserPhotoURL);
   const [userBlogUrl, setUserBlogUrl] = useState("");
   const blogUrl = useGetBlogNameFromUrl();
-  const { theme } = useTheme(); // 현재 테마 가져오기
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -75,93 +78,111 @@ const Header = () => {
       });
   };
 
-  //   if (pathname === "/login" || pathname === "/signup") {
-  //     return null;
-  //   }
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  useEffect(() => {
+    // 페이지 변경될 때 상태 초기화
+    setMenuOpen(false);
+    console.log("pathname: ", pathname);
+  }, [pathname]);
+  const { theme, mounted } = useMountedTheme();
+
+  if (!mounted) {
+    return null; // ✅ 마운트되기 전에는 아무것도 렌더링하지 않음 (Hydration mismatch 방지)
+  }
 
   return (
-    <header
-      className={`${styles.header} ${
-        theme === "dark" ? styles.darkHeader : ""
-      }`}
-    >
-      <div className={styles.logo}>
-        {!isLoggedIn ? (
-          <Link href={"/"}>
-            <h1>JoyLog</h1>
-          </Link>
-        ) : (
-          <Link href={`/blog/${userBlogUrl}`} scroll={false}>
-            <div className={styles.profileImage}>
-              <Image
-                alt="프로필 이미지"
-                src={userPhotoURL || "/og_Image.gif"}
-                layout="fill"
-              />
-            </div>
-
-            <h1>{displayName}&#39;s JoyLog</h1>
-          </Link>
-        )}
-      </div>
-      {blogUrl ? (
-        <nav className={styles.nav}>
-          <ul>
-            <li>
-              <Link href={`/blog/${blogUrl}`} scroll={false}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href={`/blog/${blogUrl}/post`} scroll={false}>
-                Posts
-              </Link>
-            </li>
-            <li>
-              <Link href={`/blog/${blogUrl}/contact`} scroll={false}>
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      ) : (
-        ""
-      )}
-
-      <div className={styles.loginBar}>
-        <ul className={styles.list}>
+    <>
+      <header
+        className={`${setThemeClass(theme, styles.darkHeader, styles.header)}`}
+      >
+        <div className={styles.logo}>
           {!isLoggedIn ? (
-            <>
-              <li className={styles.item}>
-                <Link href={"/login"}>로그인</Link>
-              </li>
-              <li className={styles.item}>
-                <Link href="/signup">회원가입</Link>
-              </li>
-            </>
+            <Link href={"/"}>
+              <h1>JoyLog</h1>
+            </Link>
           ) : (
-            <>
-              <li className={styles.item}>
-                <Link
-                  href={"/"}
-                  onClick={() => {
-                    logoutUser();
-                  }}
-                >
-                  로그아웃
+            <Link href={`/blog/${userBlogUrl}`} scroll={false}>
+              <div className={styles.profileImage}>
+                <Image
+                  alt="프로필 이미지"
+                  src={userPhotoURL || "/images/og_Image.gif"}
+                  layout="fill"
+                />
+              </div>
+
+              <h1>{displayName}&#39;s JoyLog</h1>
+            </Link>
+          )}
+        </div>
+        {blogUrl ? (
+          <nav className={`${styles.nav} ${menuOpen ? styles.active : ""}`}>
+            <ul>
+              <li>
+                <Link href={`/blog/${blogUrl}`} scroll={false}>
+                  Home
                 </Link>
               </li>
-            </>
-          )}
-        </ul>
-        <div className={`${styles.item} ${styles.hambuger}`}>
-          hambuger
-          <span></span>
-          <span></span>
-          <span></span>
+              <li>
+                <Link href={`/blog/${blogUrl}/post`} scroll={false}>
+                  Posts
+                </Link>
+              </li>
+              <li>
+                <Link href={`/blog/${blogUrl}/contact`} scroll={false}>
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        ) : (
+          ""
+        )}
+
+        <div className={styles.loginBar}>
+          <ul className={styles.list}>
+            {!isLoggedIn ? (
+              <>
+                <li className={styles.item}>
+                  <Link href={"/login"}>로그인</Link>
+                </li>
+                <li className={styles.item}>
+                  <Link href="/signup">회원가입</Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className={styles.item}>
+                  <Link
+                    href={"/"}
+                    onClick={() => {
+                      logoutUser();
+                    }}
+                  >
+                    로그아웃
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
+          <div
+            id="hamburger"
+            className={`${styles.hamburger} ${menuOpen ? styles.active : ""}`}
+            onClick={toggleMenu}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <div
+        id={styles.deemedWrapper}
+        className={`${menuOpen ? styles.active : ""}`}
+      ></div>
+    </>
   );
 };
 

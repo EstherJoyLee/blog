@@ -3,10 +3,22 @@
 import { auth, db, storage } from "@/firebase/config";
 import { getUniqueBlogUrl } from "@/utils/blogUrlService";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  query,
+  collection,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./SignUp.module.scss";
+import FormLayout from "@/components/FormLayout/FormLayout";
+import Input from "@/components/FormLayout/Input/Input";
+import TermsAgreement from "@/components/termsAgreement/TermsAgreement";
+import CustomButton from "@/components/FormLayout/Button/Button";
+import { useRouter } from "next/navigation";
 
 const SignupClient = () => {
   const [email, setEmail] = useState("");
@@ -20,68 +32,63 @@ const SignupClient = () => {
   const [emailAvailable, setEmailAvailable] = useState(true);
   const [blogUrl, setBlogUrl] = useState("");
   const [isUrlAvailable, setIsUrlAvailable] = useState(true);
-
-  useEffect(() => {
-    if (email) {
-      getUniqueBlogUrl(email).then(setBlogUrl);
-    }
-  }, [email]);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [blogUrlError, setBlogUrlError] = useState("");
+  const router = useRouter();
 
   // blogUrl 중복 확인
   const checkBlogUrlAvailability = async () => {
     if (!blogUrl) return;
-    const userDocRef = doc(db, "users", blogUrl);
-    const userDocSnap = await getDoc(userDocRef);
-    setIsUrlAvailable(!userDocSnap.exists());
+
+    const q = query(collection(db, "users"), where("blogUrl", "==", blogUrl));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      setIsUrlAvailable(false);
+      setBlogUrlError(
+        "이미 존재하는 블로그 주소입니다. 다른 주소를 입력해주세요."
+      );
+    } else {
+      setIsUrlAvailable(true);
+      setBlogUrlError(""); // 중복이 없으면 에러 메시지 제거
+    }
   };
 
-  // 이메일 중복 확인 함수
-  const checkEmailAvailability = async () => {
+  const checkEmailExistsInAuth = async (email: string) => {
     try {
-      console.log("email", email);
-      const userDocRef = doc(db, "users", email);
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
+      const q = query(collection(db, "users"), where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
         setEmailAvailable(false);
-        setError("이 이메일은 이미 사용 중입니다.");
+        setEmailError("이 이메일은 이미 사용 중입니다.");
+        return true;
       } else {
         setEmailAvailable(true);
-        setError("");
+        setEmailError("");
+        return false;
       }
     } catch (err) {
-      if (err instanceof Error) {
-        setError("이메일 중복 확인 중 오류가 발생했습니다.");
-      }
+      console.error("Firebase 이메일 중복 검사 오류:", err);
+      return false;
     }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setError("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-    if (!termsAgreed) {
-      setError("서비스 이용약관에 동의해주세요.");
-      return;
-    } else if (!privacyAgreed) {
-      setError("개인정보 이용약관에 동의해주세요.");
-      return;
-    } else {
-      setError("모든 약관에 동의해야 합니다.");
-    }
 
-    if (!isUrlAvailable) {
-      setError("이 블로그 주소는 이미 사용 중입니다.");
-      return;
-    }
-
-    if (!emailAvailable) {
-      setError("이메일을 확인해주세요.");
+    // ✅ Firebase Authentication에서 이메일이 이미 있는지 검사
+    const emailExists = await checkEmailExistsInAuth(email);
+    if (emailExists) {
+      setError("이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.");
       return;
     }
 
     try {
+      console.log("📌 회원가입 시도:", email);
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -89,115 +96,194 @@ const SignupClient = () => {
       );
       const user = userCredential.user;
 
-      console.log("user:", user);
+      if (!user) throw new Error("Firebase에서 사용자 생성에 실패했습니다.");
+      console.log("✅ Firebase Authentication 등록 성공:", user.uid);
 
-      // Firebase Storage에 프로필 이미지 업로드
-      let profileImageUrl = "";
-      if (profileImage) {
-        const storageRef = ref(storage, `profileImages/${user.uid}`);
-        const snapshot = await uploadBytes(storageRef, profileImage);
-        profileImageUrl = await getDownloadURL(snapshot.ref);
+      // Firestore 저장 (실패 가능성 있음)
+      try {
+        console.log("📌 Firestore에 사용자 데이터 저장 시도...");
+
+        await setDoc(doc(db, "users", user.uid), {
+          email,
+          nickName,
+          termsAgreed,
+          privacyAgreed,
+          agreedAt: new Date().toISOString(),
+          blogUrl: await getUniqueBlogUrl(user.email!),
+          uid: user.uid,
+        });
+
+        console.log("✅ Firestore 저장 성공!");
+      } catch (firestoreError) {
+        console.error("🚨 Firestore 저장 실패:", firestoreError);
+
+        // Firestore 저장 실패 시 Authentication에서 사용자 삭제
+        await user.delete();
+        console.error(
+          "🗑️ Firestore 저장 실패로 인해 Authentication 사용자 삭제됨"
+        );
+
+        setError("회원가입 중 문제가 발생했습니다. 다시 시도해주세요.");
+        return;
       }
-      console.log("profileImageUrl:", profileImageUrl);
-
-      await updateProfile(user, {
-        displayName: nickName,
-        photoURL: profileImageUrl,
-      });
-
-      // 이메일의 고유 이름 부분(@ 앞부분)을 blogUrl로 저장
-      const blogUrl = await getUniqueBlogUrl(user.email!);
-
-      await setDoc(doc(db, "users", user.uid), {
-        nickName,
-        profileImage: profileImageUrl,
-        termsAgreed,
-        privacyAgreed,
-        agreedAt: new Date().toISOString(),
-        blogUrl, // 이메일의 고유 이름 부분을 blogUrl로 저장
-      });
 
       alert("회원가입이 완료되었습니다.");
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("회원가입 중 알 수 없는 오류가 발생했습니다.");
-      }
+      router.push(`/blog/${blogUrl}`);
+    } catch (err: any) {
+      console.error("🚨 Firebase 오류:", err.code, err.message);
+      setError(err.message);
+      alert(err.message);
     }
   };
 
+  // 이메일 중복 확인 함수
+  const checkEmailAvailability = useCallback(async (email: string) => {
+    if (!email) return;
+
+    try {
+      const q = query(collection(db, "users"), where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        setEmailAvailable(false);
+        setEmailError("이 이메일은 이미 사용 중입니다.");
+      } else {
+        setEmailAvailable(true);
+        setEmailError(""); // 이메일 사용 가능 시 에러 제거
+      }
+    } catch (err) {
+      setEmailError("이메일 중복 확인 중 오류가 발생했습니다.");
+    }
+  }, []);
+
+  const validateEmail = (email: string) => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      setEmailError("올바른 이메일 형식이 아닙니다.");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const validatePassword = (password: string) => {
+    const passwordPattern =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!passwordPattern.test(password)) {
+      setPasswordError(
+        "비밀번호는 최소 6자 이상, 영문, 숫자, 특수문자를 포함해야 합니다."
+      );
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const validateConfirmPassword = (confirmPassword: string) => {
+    if (confirmPassword !== password) {
+      setConfirmPasswordError("비밀번호가 일치하지 않습니다.");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
+  useEffect(() => {
+    if (email) {
+      getUniqueBlogUrl(email).then(setBlogUrl);
+    }
+
+    if (blogUrl.length > 2) {
+      checkBlogUrlAvailability();
+    }
+  }, [blogUrl, email]);
+
   return (
     <>
-      <div>
-        <h1>회원가입</h1>
+      <FormLayout title="회원가입">
         <form onSubmit={handleSignup}>
           {/* 이메일 입력 */}
-          <label>
-            Email <b>*</b>
-          </label>
-          <input
+
+          <Input
             type="email"
             placeholder="이메일"
-            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={checkEmailAvailability} // 이메일 입력 후 중복 확인
-            required
-          />
-          {error && !emailAvailable && (
-            <div className="error" style={{ color: "#FF0000" }}>
-              {error}
-            </div>
-          )}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              validateEmail(e.target.value);
 
-          <label>
-            비밀번호 <b>*</b>
-          </label>
-          <input
+              if (
+                /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+                  e.target.value
+                )
+              ) {
+                checkEmailAvailability(e.target.value); // ✅ 이메일 형식이 올바르면 중복 검사 실행
+              }
+            }}
+            label="Email"
+            isRequired
+            error={emailError}
+          />
+          <Input
             type="password"
             placeholder="비밀번호"
-            pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            onChange={(e) => {
+              setPassword(e.target.value);
+              validatePassword(e.target.value);
+            }}
+            label="비밀번호"
+            isRequired
+            isPassword
+            error={passwordError}
           />
-          <label>
-            비밀번호 확인 <b>*</b>
-          </label>
-          <input
+
+          <Input
             type="password"
             placeholder="비밀번호 확인"
-            pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              validateConfirmPassword(e.target.value);
+            }}
+            label="비밀번호 확인"
+            isRequired
+            isPassword
+            error={confirmPasswordError}
           />
-          <label>블로그 주소</label>
-          <input
+
+          <Input
+            label="블로그 주소"
             type="text"
+            placeholder="블로그 주소"
             value={blogUrl}
-            onChange={(e) =>
-              setBlogUrl(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ""))
-            }
-            onBlur={checkBlogUrlAvailability}
-            required
-            // 가상요소로 에러 메세지 세팅 후
-            // 가상 요소의 부모요소의 class로 출력 여부 결정
-            className={!isUrlAvailable ? styles.show : ""}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const sanitizedValue = inputValue.replace(/[^a-z0-9-]/g, "");
+
+              if (inputValue !== sanitizedValue) {
+                setBlogUrlError(
+                  "블로그 주소에는 영문 소문자, 숫자, 하이픈(-)만 사용할 수 있습니다."
+                );
+              } else {
+                setBlogUrlError("");
+              }
+
+              setBlogUrl(sanitizedValue); // ✅ 입력 값이 바뀌면 useEffect에서 즉시 중복 검사 실행
+            }}
+            // onBlur={checkBlogUrlAvailability}
+            isRequired
+            error={blogUrlError}
           />
-          <label>
-            닉네임 <b>*</b>
-          </label>
-          <input
+
+          <Input
+            label="닉네임"
             type="text"
             placeholder="닉네임"
             value={nickName}
             onChange={(e) => setNickName(e.target.value)}
-            required
+            isRequired
           />
-          <label>프로필 이미지</label>
-          <input
+          {/* 
+          <Input
+            label="프로필 이미지"
             type="file"
             accept="image/*"
             onChange={(e) => {
@@ -205,63 +291,30 @@ const SignupClient = () => {
                 setProfileImage(e.target.files[0]);
               }
             }}
+          /> */}
+          <TermsAgreement
+            termsAgreed={termsAgreed}
+            setTermsAgreed={setTermsAgreed}
+            privacyAgreed={privacyAgreed}
+            setPrivacyAgreed={setPrivacyAgreed}
           />
-          <label>서비스 이용 약관</label>
-          <div id="terms-content">
-            <p>
-              여기에 서비스 이용약관 내용을 넣습니다. 이 텍스트는 예시입니다.
-            </p>
-            <p>
-              이용약관은 사용자가 서비스 이용 시 준수해야 할 규정을 설명합니다.
-            </p>
-            <p>약관 내용을 충분히 읽어보신 후 동의 체크를 해주세요.</p>
-            <p>약관의 마지막 부분입니다.</p>
-          </div>
-          <div>
-            <label htmlFor="terms-checkbox">
-              서비스 이용약관에 동의합니다. <b>*</b>
-            </label>
-            <input
-              type="checkbox"
-              checked={termsAgreed}
-              onChange={(e) => setTermsAgreed(e.target.checked)}
-              id="terms-checkbox"
-              required
+
+          <div className="commonBtns">
+            <CustomButton
+              text="회원가입"
+              variant="contained"
+              color="primary"
+              type="submit"
             />
-          </div>
-
-          <label>개인정보 이용 약관</label>
-          <div id="privacy-content">
-            <p>
-              여기에 서비스 이용약관 내용을 넣습니다. 이 텍스트는 예시입니다.
-            </p>
-            <p>
-              이용약관은 사용자가 서비스 이용 시 준수해야 할 규정을 설명합니다.
-            </p>
-            <p>약관 내용을 충분히 읽어보신 후 동의 체크를 해주세요.</p>
-            <p>약관의 마지막 부분입니다.</p>
-          </div>
-          <div>
-            <label htmlFor="privacy-checkbox">
-              개인정보 수집 및 이용약관에 동의합니다. <b>*</b>
-            </label>
-            <input
-              type="checkbox"
-              checked={privacyAgreed}
-              onChange={(e) => setPrivacyAgreed(e.target.checked)}
-              id="privacy-checkbox"
-              required
+            <CustomButton
+              text="취소"
+              variant="outlined"
+              color="primary"
+              type="button"
             />
-          </div>
-
-          {error && <div className="error">{error}</div>}
-
-          <div className="btns">
-            <button type="submit">회원가입</button>
-            <button type="button">취소</button>
           </div>
         </form>
-      </div>
+      </FormLayout>
     </>
   );
 };

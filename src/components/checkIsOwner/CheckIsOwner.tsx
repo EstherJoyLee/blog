@@ -37,7 +37,7 @@ const CheckIsOwnerProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (!user) {
-        console.log("🔴 로그아웃 감지: 쿠키 제거");
+        // console.log("🔴 로그아웃 감지: 쿠키 제거");
         Cookies.remove("isOwner");
         Cookies.remove("userId");
         setIsOwner(false);
@@ -48,6 +48,10 @@ const CheckIsOwnerProvider = ({ children }: { children: React.ReactNode }) => {
       Cookies.set("userId", userId, { path: "/" });
 
       try {
+        if (!blogNameFromUrl) {
+          console.error("🚨 blogNameFromUrl is undefined or empty!");
+          return;
+        }
         const res = await fetch(`/api/check-owner?blogName=${blogNameFromUrl}`);
 
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
@@ -73,9 +77,9 @@ const CheckIsOwnerProvider = ({ children }: { children: React.ReactNode }) => {
   }, [router, blogNameFromUrl, isOwner]);
 
   useEffect(() => {
-    console.log(
-      `🔍 Comparing userBlogUrl(${userBlogUrl}) === blogNameFromUrl(${blogNameFromUrl})`
-    );
+    // console.log(
+    //   `🔍 Comparing userBlogUrl(${userBlogUrl}) === blogNameFromUrl(${blogNameFromUrl})`
+    // );
     if (userBlogUrl === blogNameFromUrl) {
       setIsOwner(true);
     } else {

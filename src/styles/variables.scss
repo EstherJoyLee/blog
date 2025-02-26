@@ -1,0 +1,18 @@
+// Colors
+$primary: #e5e7eb;
+$primary-gradient: linear-gradient(to bottom, $primary, #fff);
+$primary-point: rgba(255, 157, 65, 0.503);
+$dark-primary: #1f2937;
+$dark-second: #161d27;
+$dark-gradient: linear-gradient(to bottom, $dark-primary, #161d27);
+$dark-point: rgba(255, 255, 255, 0.4);
+
+// Responsive Sizes
+$breakpoints: (
+  "xs": 480px,
+  "sm": 768px,
+  "md": 1024px,
+  "lg": 1280px,
+  "xl": 1440px,
+  "xxl": 1920px,
+);

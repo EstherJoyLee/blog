@@ -1,0 +1,58 @@
+.editPost {
+  h1 {
+    color: red;
+  }
+  form {
+    & > div {
+      color: red;
+    }
+
+    .editTitle {
+      color: red;
+    }
+
+    .editContent {
+      color: red;
+    }
+
+    .editImage {
+      color: red image {
+        color: red;
+      }
+      button {
+        color: red;
+      }
+      p {
+        color: red;
+      }
+    }
+
+    .checkPublic {
+      color: red;
+    }
+
+    label {
+      color: red;
+    }
+
+    input[type="text"] {
+      color: red;
+    }
+
+    input[type="file"] {
+      color: red;
+    }
+
+    input[type="checkbox"] {
+      color: red;
+    }
+
+    button[type="submit"] {
+      color: red;
+    }
+  }
+}
+
+.derkEditPost {
+  color: red;
+}

@@ -4,7 +4,7 @@ import { ElementType } from "react"; // ✅ 추가
 
 export type MagneticElement = {
   tag: ElementType; // ✅ JSX에서 사용할 수 있도록 React.ElementType 지정
-  text: string;
+  text?: string;
   className?: string;
 };
 

@@ -1,4 +1,5 @@
 @import "normalize.css";
+@import "./common.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,28 +17,37 @@
   }
 }
 
+html,
 body {
-  color: var(--foreground);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+body {
+  color: #1f2937;
   background: var(--background);
   font-family: "Roboto", "Noto Sans KR", sans-serif;
+  word-break: keep-all;
 }
 
 img {
   object-fit: cover;
   width: 100%;
   height: 100%;
+  max-width: 100%;
 }
 
 header {
   height: var(--header-h);
 }
 
-main {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 20px;
-  padding: calc(var(--header-h) + 40px) 20px 20px;
+#wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 h1,

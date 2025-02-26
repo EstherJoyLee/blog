@@ -1,0 +1,11 @@
+@use "@/styles/variables" as *;
+
+@mixin respond($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "⚠️ #{$breakpoint}는 정의되지 않은 분기점입니다!";
+  }
+}

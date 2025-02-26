@@ -8,7 +8,15 @@ export default {
   ],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#f5f5f5",
+        primaryPoint: "#0070f3",
+        darkPrimary: "#1f2937",
+        darkSecond: "#161d27",
+        darkPoint: "#fd26a0",
+      },
+    },
   },
   plugins: [],
 } satisfies Config;

@@ -1,0 +1,122 @@
+@use "@/styles/variables.scss" as *;
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .markdownWrapper {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    textarea,
+    > div {
+      flex: 1;
+    }
+    > div {
+      border: 1px solid #ddd;
+      padding: 10px;
+      overflow: auto;
+    }
+  }
+
+  label {
+    margin-bottom: 4px;
+    b {
+      color: #ff0000;
+    }
+  }
+
+  .input {
+    position: relative;
+    width: 100%;
+
+    input {
+      width: 100%;
+      padding: 12px;
+      padding-right: 40px; // 아이콘 공간 확보
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      background-color: #fff;
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    &:focus {
+      border: 1px solid #666;
+    }
+
+    .inputButton {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: #666;
+
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 8px;
+  }
+  .checkboxInput {
+    display: none;
+    &:checked + .checkboxCustom::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 5px;
+      border-left: 2px solid #007bff;
+      border-bottom: 2px solid #007bff;
+      transform: rotate(-45deg);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%) rotate(-45deg);
+    }
+  }
+
+  .checkboxCustom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #666;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    position: relative;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+  }
+  .checkboxText {
+    font-size: 16px;
+  }
+}
+
+.darkInputGroup {
+  textarea {
+    color: $dark-second;
+  }
+}

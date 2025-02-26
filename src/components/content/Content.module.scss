@@ -1,0 +1,28 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+main.noAside {
+  display: block;
+}
+
+.blogMain {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px auto; /* ✅ aside + div 레이아웃 설정 */
+  min-height: 100vh;
+  padding-top: var(--header-h);
+  background: #fff;
+  height: fit-content;
+  width: 100%;
+  @include respond(sm) {
+    grid-template-columns: auto;
+  }
+
+  &.false {
+    display: block;
+  }
+}
+
+.darkBlogMain {
+  background: #161d27;
+}

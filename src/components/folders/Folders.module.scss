@@ -1,0 +1,144 @@
+@use "@/styles/variables" as *;
+
+.folderManagement {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+}
+
+.folderInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  & > div {
+    flex-grow: 1;
+  }
+}
+
+.folderList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.folderItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: background 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
+
+  & > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    [class$="MuiTextField-root"] {
+      flex-grow: 1;
+    }
+
+    span {
+      word-break: break-word;
+    }
+  }
+}
+
+.folderButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.folderButtons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.folderGroup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 10px;
+
+  label {
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    b {
+      color: #ff0000;
+    }
+  }
+}
+
+.folderSelectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.folderSelect {
+  width: 100%;
+  padding: 12px;
+  padding-right: 40px; // 화살표 공간 확보
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: #fff;
+  outline: none;
+  transition: border 0.3s;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    border: 1px solid #666;
+  }
+}
+
+/* ✅ 드롭다운 화살표 추가 */
+.folderSelectWrapper::after {
+  content: "▼";
+  font-size: 14px;
+  color: #666;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; // 클릭 방지
+}
+
+.darkFolderWrapper {
+  color: $dark-primary;
+}
+
+.darkFolderGroup {
+  .folderSelect {
+    color: $dark-primary;
+  }
+}

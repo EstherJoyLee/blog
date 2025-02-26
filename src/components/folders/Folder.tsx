@@ -22,6 +22,9 @@ import {
 } from "firebase/firestore";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import styles from "./Folders.module.scss";
+import { setThemeClass } from "@/utils/setThemeClass";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
 
 const Folder = ({ folders }: IFolderProps) => {
   const dispatch = useDispatch();
@@ -32,6 +35,7 @@ const Folder = ({ folders }: IFolderProps) => {
   const user = auth.currentUser;
 
   const handleAddFolder = async () => {
+    if (!newFolderName.trim()) return;
     if (newFolderName) {
       try {
         // const userDocRef = doc(db, "users", blogUrl);
@@ -79,7 +83,15 @@ const Folder = ({ folders }: IFolderProps) => {
         });
 
         // Redux 상태 업데이트
-        dispatch(UPDATE_FOLDERS({ id: editingFolder, name: editedName }));
+        dispatch(
+          UPDATE_FOLDERS({
+            id: editingFolder,
+            name: editedName,
+            authorUid: user.uid,
+            blogUrl: blogUrl,
+          })
+        );
+
         setEditingFolder(null);
         setEditedName(""); // 입력란 초기화
       } catch (error) {
@@ -113,42 +125,68 @@ const Folder = ({ folders }: IFolderProps) => {
     }
   };
 
-  return (
-    <div>
-      <h3>폴더 관리</h3>
-      <div>
-        <TextField
-          label="새 폴더 이름"
-          value={newFolderName}
-          onChange={(e) => setNewFolderName(e.target.value)}
-        />
-        <Button onClick={handleAddFolder}>폴더 추가</Button>
-      </div>
+  const { theme, mounted } = useMountedTheme();
 
-      <div>
-        {folders.map((folder) => (
-          <div key={folder.id} style={{ marginTop: "10px" }}>
-            {editingFolder === folder.id ? (
-              <div>
-                <TextField
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                />
-                <Button onClick={handleUpdateFolder}>수정 완료</Button>
-              </div>
-            ) : (
-              <div>
-                <span>{folder.name}</span>
-                <Button onClick={() => setEditingFolder(folder.id)}>
-                  수정
-                </Button>
-                <Button onClick={() => handleDeleteFolder(folder.id)}>
-                  삭제
-                </Button>
-              </div>
-            )}
-          </div>
-        ))}
+  if (!mounted) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`${setThemeClass(
+        theme,
+        styles.darkFolderWrapper,
+        styles.folderWrapper
+      )}`}
+    >
+      <label>폴더 관리</label>
+      <div className={styles.folderManagement}>
+        <div className={styles.folderInput}>
+          <TextField
+            label="새 폴더 이름"
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+          />
+          <Button onClick={handleAddFolder}>폴더 추가</Button>
+        </div>
+
+        <div className={styles.folderList}>
+          {folders.map((folder) => (
+            <div key={folder.id} className={styles.folderItem}>
+              {editingFolder === folder.id ? (
+                <div>
+                  <TextField
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                  />
+                  <div className={styles.folderButtons}>
+                    <Button onClick={handleUpdateFolder}>완료</Button>
+                    <Button
+                      onClick={() => {
+                        setEditingFolder(null);
+                        setEditedName("");
+                      }}
+                    >
+                      취소
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <span>{folder.name}</span>
+                  <div className={styles.folderButtons}>
+                    <Button onClick={() => setEditingFolder(folder.id)}>
+                      수정
+                    </Button>
+                    <Button onClick={() => handleDeleteFolder(folder.id)}>
+                      삭제
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./HowItWorks.module.scss";
 import { FaUser, FaPenFancy, FaRocket, FaShare } from "react-icons/fa";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
+import { setThemeClass } from "@/utils/setThemeClass";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -52,16 +54,40 @@ export default function HowItWorks() {
     );
   }, []);
 
+  const { theme, mounted } = useMountedTheme();
+
+  if (!mounted) {
+    return null; // ✅ 마운트되기 전에는 아무것도 렌더링하지 않음 (Hydration mismatch 방지)
+  }
+
   return (
-    <section ref={sectionRef} className={styles.howItWorks}>
-      <h2 className={styles.title}>블로그 사용 방법</h2>
-      <div className={styles.timeline}>
+    <section
+      className={`${setThemeClass(theme, styles.darkHowItWorks, [
+        styles.howItWorks,
+        "flex flex-col items-center bg-gradient-to-b from-white to-primary py-12",
+      ])}`}
+    >
+      <h2 className={`${styles.title} "text-3xl font-bold mb-10 text-center"`}>
+        블로그 사용 방법
+      </h2>
+      <div className={`${styles.timeline} "grid gap-6 w-full max-w-3xl"`}>
         {steps.map((step, index) => (
-          <div key={index} className={styles.step}>
-            <div className={styles.icon}>{step.icon}</div>
+          <div
+            key={index}
+            className={`${styles.step} "flex items-center gap-4 p-6 rounded-xl shadow-lg bg-white hover:scale-105 transition-transform duration-300"`}
+          >
+            <div
+              className={`${styles.icon} "text-3xl bg-gray-200 rounded-full p-3"`}
+            >
+              {step.icon}
+            </div>
             <div className={styles.content}>
-              <h3 className={styles.stepTitle}>{step.title}</h3>
-              <p className={styles.stepDescription}>{step.description}</p>
+              <h3 className={`${styles.stepTitle} "text-xl font-semibold"`}>
+                {step.title}
+              </h3>
+              <p className={`${styles.stepDescription} "text-gray-600"`}>
+                {step.description}
+              </p>
             </div>
           </div>
         ))}
