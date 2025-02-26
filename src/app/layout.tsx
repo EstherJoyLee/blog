@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import Header from "@/layouts/header/Header";
 import Providers from "@/redux/Providers";
 import Footer from "@/layouts/footer/Footer";
-import { spaceGrotesk, roboto, notoSansKR } from "@/styles/font";
+// import { spaceGrotesk, roboto, notoSansKR } from "@/styles/font";
 import Content from "@/components/content/Content";
 import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body
-        className={`${spaceGrotesk.className} ${roboto.className} ${notoSansKR.className} bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
+        className={`bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
       >
         {/* <CheckError /> */}
         <div id="wrap">

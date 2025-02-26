@@ -24,6 +24,7 @@
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.2",
+    "genkit": "^1.0.5",
     "gsap": "^3.12.7",
     "heroicons": "^2.2.0",
     "js-cookie": "^3.0.5",
