@@ -33,3 +33,5 @@ Thumbs.db
 # 📂 Git 관련
 .git/
 .gitignore
+
+.vercel
