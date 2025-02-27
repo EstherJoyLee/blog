@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import emailjs from "emailjs-com";
+import emailjs from "@emailjs/browser";
 import FormLayout from "@/components/FormLayout/FormLayout";
 import Input from "@/components/FormLayout/Input/Input";
 import { Button } from "@mui/material";
@@ -29,9 +29,10 @@ const ContactForm = () => {
         );
         const userSnapshot = await getDocs(userQuery);
 
-        const authorEmail = userSnapshot.docs[0].data().email;
+        if (!userSnapshot.empty) {
+          setBlogOwnerEmail(userSnapshot.docs[0].data().email);
+        }
 
-        setBlogOwnerEmail(authorEmail);
         console.log("blogOwnerEmail: ", blogOwnerEmail);
       } catch (error) {
         if (error instanceof Error) {
@@ -43,14 +44,16 @@ const ContactForm = () => {
       }
     };
     fetchOwnerEmail();
-  }, [blogUrl, blogOwnerEmail]);
+  }, [blogUrl]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     // console.log("변경된 필드:", e.target.name, "새 값:", e.target.value);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // setIsLoading(true);
     console.log("blogOwnerEmail: ", blogOwnerEmail);
@@ -63,7 +66,6 @@ const ContactForm = () => {
 
     const emailData = {
       to_name: blogUrl,
-      to_email: blogOwnerEmail,
       ...formData,
     };
 
