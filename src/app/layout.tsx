@@ -8,16 +8,36 @@ import Content from "@/components/content/Content";
 import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 
 export const metadata: Metadata = {
-  // ✅ 기본 정보 (SEO 최적화)
   title: "JoyLog - Dev & Life Blog",
-  description: "PinkRabbit이 만든 개발 및 라이프 블로그. 최신 기술과 개발 일상을 공유합니다.",
+  description:
+    "PinkRabbit이 만든 개발 및 라이프 블로그. 최신 기술과 개발 일상을 공유합니다.",
 
+  openGraph: {
+    title: "JoyLog - Dev & Life Blog",
+    description:
+      "PinkRabbit이 만든 개발 및 라이프 블로그. 최신 기술과 개발 일상을 공유합니다.",
+    url: "https://joylog.vercel.app/",
+    siteName: "JoyLog",
+    images: [
+      {
+        url: "https://joylog.vercel.app/images/og_image.gif", // Open Graph 이미지 URL
+        width: 1200,
+        height: 630,
+        alt: "JoyLog 블로그 미리보기 이미지",
+      },
+    ],
+    type: "website",
+  },
 
-
-  // ✅ Robots (검색 엔진 크롤링 제어)
   robots: {
-    index: true, // 🔹 검색 엔진 색인 허용
-    follow: true, // 🔹 링크 따라가기 허용
+    index: true,
+    follow: true,
+  },
+
+  icons: {
+    icon: "/favicon/favicon.ico",
+    shortcut: "/favicon/favicon.ico",
+    apple: "/favicon/apple-icon-60x60.png",
   },
 };
 
