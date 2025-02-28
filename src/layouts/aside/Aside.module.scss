@@ -27,6 +27,8 @@
   .folders {
     width: 100%;
     margin-bottom: 12px;
+    max-height: 68vh;
+    overflow: auto;
     .folder {
       border-bottom: 1px solid #aaa;
       button {
