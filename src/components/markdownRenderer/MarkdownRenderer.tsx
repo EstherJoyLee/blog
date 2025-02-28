@@ -31,19 +31,13 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           <h3 className="text-xl font-semibold text-cyan-500 my-3" {...props} />
         ),
         h4: ({ ...props }) => (
-          <h4
-            className="text-xl font-semibold text-fuchsia-500 my-3"
-            {...props}
-          />
+          <h4 className="font-semibold text-fuchsia-500 my-3" {...props} />
         ),
         h5: ({ ...props }) => (
-          <h5 className="text-xl font-semibold text-rose-500 my-3" {...props} />
+          <h5 className="font-semibold text-rose-500 my-3" {...props} />
         ),
         h6: ({ ...props }) => (
-          <h6
-            className="text-xl font-semibold text-slate-500 my-3"
-            {...props}
-          />
+          <h6 className="font-semibold text-slate-500 my-3" {...props} />
         ),
         p: ({ ...props }) => (
           <p className="text-base leading-relaxed my-3" {...props} />
