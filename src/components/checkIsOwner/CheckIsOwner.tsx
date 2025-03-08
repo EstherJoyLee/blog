@@ -48,7 +48,7 @@ const CheckIsOwnerProvider = ({ children }: { children: React.ReactNode }) => {
       Cookies.set("userId", userId, { path: "/" });
 
       try {
-        if (!blogNameFromUrl) {
+        if (!blogNameFromUrl || blogNameFromUrl.trim() === "") {
           console.error("🚨 blogNameFromUrl is undefined or empty!");
           return;
         }
@@ -74,7 +74,7 @@ const CheckIsOwnerProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       unsubscribe();
     };
-  }, [router, blogNameFromUrl, isOwner]);
+  }, [router, blogNameFromUrl]);
 
   useEffect(() => {
     // console.log(

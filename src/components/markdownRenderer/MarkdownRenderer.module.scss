@@ -1,0 +1,29 @@
+.table {
+  word-break: keep-all;
+  border: 1px solid #999;
+  border-radius: 8px;
+  thead {
+    tr {
+      border-bottom: 1px solid #999;
+    }
+    th:not(:last-of-type) {
+      border-right: 1px solid #fff;
+    }
+    th {
+      padding: 8px;
+      background: #999;
+      color: #fff;
+    }
+  }
+  tbody {
+    tr:not(:last-of-type) {
+      border-bottom: 1px solid #999;
+    }
+    td:not(:last-of-type) {
+      border-right: 1px solid #999;
+    }
+    td {
+      padding: 8px;
+    }
+  }
+}

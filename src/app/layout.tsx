@@ -6,6 +6,7 @@ import Footer from "@/layouts/footer/Footer";
 // import { spaceGrotesk, roboto, notoSansKR } from "@/styles/font";
 import Content from "@/components/content/Content";
 import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
+import AuthProvider from "@/components/authProvider/AuthProvider";
 
 export const metadata: Metadata = {
   title: "JoyLog - Dev & Life Blog",
@@ -39,6 +40,9 @@ export const metadata: Metadata = {
     shortcut: "/favicon/favicon.ico",
     apple: "/favicon/apple-icon-60x60.png",
   },
+  verification: {
+    google: "ihrT54paPDZpR99DYoszaBuiVsenXK0puPo35Oxuk6g",
+  },
 };
 
 export default function RootLayout({
@@ -54,6 +58,7 @@ export default function RootLayout({
         {/* <CheckError /> */}
         <div id="wrap">
           <Providers>
+            <AuthProvider />
             <Header />
             <Content>{children}</Content>
             <ThemeToggle />

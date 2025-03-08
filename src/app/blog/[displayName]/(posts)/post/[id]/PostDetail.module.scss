@@ -14,27 +14,35 @@
     justify-content: space-between;
     border-bottom: 2px solid $dark-second;
 
+    h1 {
+      padding-bottom: 12px;
+      word-break: break-all;
+    }
+
     @include respond(xs) {
       flex-flow: column;
       h1 {
         font-size: 24px;
         align-self: flex-start;
         padding-right: 76px;
+        margin-top: 6px;
       }
     }
+  }
 
-    .btnGroup {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+  .btnGroup {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+    margin-top: 20px;
 
-      @include respond(xs) {
-        margin: 20px auto;
-        width: 100%;
+    @include respond(xs) {
+      margin: 20px auto;
+      width: 100%;
 
-        button {
-          flex: 1;
-        }
+      button {
+        flex: 1;
       }
     }
   }

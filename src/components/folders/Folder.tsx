@@ -103,14 +103,13 @@ const Folder = ({ folders }: IFolderProps) => {
   const handleDeleteFolder = async (id: string) => {
     try {
       // Firebase에서 폴더 삭제
-      const folderRef = doc(db, "folders", id);
-      await deleteDoc(folderRef);
 
       const batch = writeBatch(db);
 
       const postsCollection = collection(db, "posts");
       const postsQuery = query(postsCollection, where("folderId", "==", id));
       const postSnapshot = await getDocs(postsQuery);
+      console.log("💡하위 게시물 목록 가져오기 성공!");
 
       postSnapshot.forEach((doc) => {
         batch.delete(doc.ref);
@@ -118,6 +117,9 @@ const Folder = ({ folders }: IFolderProps) => {
 
       await batch.commit();
 
+      const folderRef = doc(db, "folders", id);
+      await deleteDoc(folderRef);
+      console.log("😡폴더 삭제 성공!!");
       // Redux 상태 업데이트 (삭제된 폴더를 Redux에서 제거)
       dispatch(DELETE_FOLDERS(id));
     } catch (error) {

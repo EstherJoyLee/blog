@@ -22,6 +22,7 @@ firestore.rules
 database.rules.json
 storage.rules
 remoteconfig.template.json
+serviceAccountKey.json
 
 # 📂 VSCode 관련 설정
 .vscode/

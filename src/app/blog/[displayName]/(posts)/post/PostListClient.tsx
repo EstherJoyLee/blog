@@ -1,118 +1,114 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { auth, db } from "@/firebase/config";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-  startAfter,
-  where,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { IPostState } from "@/types";
-import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
-import Loader from "@/components/loader/Loader";
-import MarkdownRenderer from "@/components/markdownRenderer/MarkdownRenderer";
-import styles from "./PostListClient.module.scss";
-import { setThemeClass } from "@/utils/setThemeClass";
+import { auth } from "@/firebase/config";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
+import { setThemeClass } from "@/utils/setThemeClass";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import styles from "./PostListClient.module.scss";
+import Image from "next/image";
+import MarkdownRenderer from "@/components/markdownRenderer/MarkdownRenderer";
+import { IPostState } from "@/types";
 
-const PageListClient = () => {
-  const [posts, setPosts] = useState<IPostState[]>([]);
-  const [lastVisibleDoc, setLastVisibleDoc] =
-    useState<QueryDocumentSnapshot | null>(null);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
+// interface Post {
+//   id: string;
+//   title: string;
+//   imageUrl?: string; // Optional property for image URL
+//   content: string; // Property for post content
+// }
+
+interface PostListClientProps {
+  initialPosts: IPostState[];
+  displayName: string;
+}
+
+const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
+  const [posts, setPosts] = useState(initialPosts);
+  const [loading, setLoading] = useState(false);
+  const [lastVisibleId, setLastVisibleId] = useState(
+    initialPosts.length > 0 ? initialPosts[initialPosts.length - 1].id : null
+  );
+  const [hasMore, setHasMore] = useState(true); // ✅ 더 이상 불러올 게시물이 없으면 false로 설정
+
+  const [userUid, setUserUid] = useState<string | null>(null);
   const router = useRouter();
-  const blogUrl = useGetBlogNameFromUrl();
-  const currentUser = auth.currentUser;
-  const maxPosts = 5; // 한 번에 가져올 게시물 개수
 
-  // ✅ Firestore에서 게시물 가져오기
-  const fetchPosts = async () => {
-    if (loading || !hasMore) return;
+  useEffect(() => {
+    const checkAuth = async () => {
+      const user = auth.currentUser;
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      console.log("🔍PostListClient에서 checkAuth 실행되는지 체크");
+      if (user) {
+        console.log("🔍PostListClient에서 checkAuth user 존재 여부 확인");
+        const idToken = await user.getIdToken(); // ✅ 사용자 ID 토큰 가져오기
+        console.log("🔑 가져온 idToken:", idToken);
 
+        // ✅ 서버에 ID 토큰을 보내 사용자 인증 확인
+        const response = await fetch(`${API_BASE_URL}/api/auth/verify-token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        });
+
+        const data = await response.json();
+        if (data.uid) {
+          setUserUid(data.uid); // ✅ 검증된 UID 저장
+          console.log("✅ 서버에서 검증된 UID:", data.uid);
+        } else {
+          console.warn("⚠️ 서버에서 인증되지 않은 사용자.");
+        }
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const fetchMorePosts = async () => {
+    if (loading || !hasMore || !lastVisibleId) return;
     setLoading(true);
-    console.log("🚀 fetchPosts 실행됨");
-    console.log("🚀 hasMore: ", hasMore);
+
+    console.log("🚀 fetchMorePosts 실행됨");
 
     try {
-      const userCollection = collection(db, "users");
-      const userQuery = query(userCollection, where("blogUrl", "==", blogUrl));
-      const userSnapshot = await getDocs(userQuery);
+      const currentUser = auth.currentUser;
+      const idToken = currentUser ? await currentUser.getIdToken() : null;
+      const response = await fetch(
+        `/api/posts?displayName=${displayName}&lastVisibleId=${lastVisibleId}&userUid=${userUid}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: idToken ? `Bearer ${idToken}` : "",
+          },
+        }
+      );
 
-      if (userSnapshot.empty) {
-        console.log("❌ 해당 블로그의 사용자를 찾을 수 없음");
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(`서버 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data || !data.posts || !Array.isArray(data.posts)) {
+        console.error("❌ API 응답 오류: data.posts가 유효하지 않음", data);
         return;
       }
 
-      const authorUid = userSnapshot.docs[0].id;
-      const postsCollection = collection(db, "posts");
-
-      let postsQuery = query(
-        postsCollection,
-        where("authorUid", "==", authorUid),
-        orderBy("createdAt", "desc"),
-        limit(maxPosts)
-      );
-
-      if (currentUser?.uid !== authorUid) {
-        // 현재 사용자가 작성자가 아니면 공개된 게시물만 가져오기
-        postsQuery = query(postsQuery, where("isPublic", "==", true));
+      if (data.posts.length > 0) {
+        setPosts((prev) => [...prev, ...data.posts]);
+        setLastVisibleId(data.lastVisibleDocId || null); // ✅ 마지막 문서 ID 업데이트
+      } else {
+        console.warn("⚠️ 더 이상 불러올 게시물이 없음");
+        setHasMore(false); // ✅ 더 이상 불러올 게시물이 없으므로 버튼 숨기기
       }
-
-      if (lastVisibleDoc) {
-        console.log("📌 기존 마지막 문서:", lastVisibleDoc.id);
-        postsQuery = query(postsQuery, startAfter(lastVisibleDoc));
-      }
-
-      const postSnapshot = await getDocs(postsQuery);
-      const newPosts = postSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as IPostState[];
-
-      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-
-      // 🔥 가져온 게시물 개수가 maxPosts보다 적다면 더 이상 불러올 데이터가 없음!
-      if (newPosts.length < maxPosts) {
-        console.log(
-          "⚠️ 가져온 게시물이 maxPosts보다 적음 → hasMore = false 설정"
-        );
-        setHasMore(false);
-      }
-
-      // ✅ 마지막 문서 업데이트
-      const lastDoc =
-        postSnapshot.docs.length > 0
-          ? postSnapshot.docs[postSnapshot.docs.length - 1]
-          : null;
-      setLastVisibleDoc(lastDoc);
     } catch (error) {
-      console.error("❌ Error fetching posts:", error);
+      console.error("❌ Error fetching more posts:", error);
     }
 
-    setLoading(false);
+    setLoading(false); // ✅ 로딩 상태 해제
   };
-
-  // ✅ 블로그 URL 변경 시 초기 게시물 불러오기
-  useEffect(() => {
-    if (blogUrl) {
-      setPosts([]); // 초기화
-      setLastVisibleDoc(null);
-      setHasMore(true);
-      fetchPosts();
-    }
-  }, [blogUrl]);
-
   const handleView = (postId: string) => {
-    router.push(`/blog/${blogUrl}/post/${postId}`);
+    router.push(`/blog/${displayName}/post/${postId}`);
   };
 
   const { theme, mounted } = useMountedTheme();
@@ -131,43 +127,34 @@ const PageListClient = () => {
       <h1 className="commonTitle">전체 게시물</h1>
 
       <div className="commonContent">
-        {posts.length > 0 ? (
-          posts.map((post) => (
-            <div
-              key={post.id}
-              className={styles.postListItem}
-              style={{ marginBottom: "20px" }}
+        {posts.map((post) => (
+          <div key={post.id} className={styles.postListItem}>
+            <h2
+              onClick={() => handleView(post.id)}
+              style={{ cursor: "pointer" }}
             >
-              <h2
-                onClick={() => handleView(post.id)}
-                style={{ cursor: "pointer" }}
-              >
-                {post.title}
-              </h2>
-              <div>
-                {post.imageUrl && (
-                  <div style={{ position: "relative", margin: "32px 0 36px" }}>
-                    <Image
-                      alt={`${post.title} 이미지`}
-                      src={post.imageUrl || ""}
-                      width={200}
-                      height={200}
-                      style={{ objectFit: "cover" }}
-                    />
-                  </div>
-                )}
-                <MarkdownRenderer content={post.content} />
-              </div>
+              {post.title}
+            </h2>
+            <div>
+              {post.imageUrl && (
+                <div style={{ position: "relative", margin: "32px 0 36px" }}>
+                  <Image
+                    alt={`${post.title} 이미지`}
+                    src={post.imageUrl || ""}
+                    width={200}
+                    height={200}
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+              )}
+              <MarkdownRenderer content={post.content} />
             </div>
-          ))
-        ) : (
-          <p>게시물이 없습니다.</p>
-        )}
-        {/* ✅ 더보기 버튼 (더 이상 불러올 게시물이 없으면 숨김) */}
+          </div>
+        ))}
         {hasMore && (
           <div className={styles.seeMoreBtn}>
             <button
-              onClick={fetchPosts}
+              onClick={fetchMorePosts}
               disabled={loading}
               className={styles.loadMoreBtn}
             >
@@ -177,10 +164,9 @@ const PageListClient = () => {
         )}
       </div>
 
-      {/* ✅ 로딩 상태 표시 */}
-      {loading && <Loader />}
+      {/* ✅ 더 이상 불러올 게시물이 없으면 버튼 숨기기 */}
     </div>
   );
 };
 
-export default PageListClient;
+export default PostListClient;

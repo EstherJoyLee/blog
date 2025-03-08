@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
+import styles from "./MarkdownRenderer.module.scss";
 
 interface MarkdownRendererProps {
   content: string | undefined;
@@ -61,6 +62,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             {...props}
           />
         ),
+        table: ({ ...props }) => <table className={styles.table} {...props} />,
       }}
     >
       {content}

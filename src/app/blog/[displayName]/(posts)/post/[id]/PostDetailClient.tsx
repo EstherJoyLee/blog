@@ -32,6 +32,7 @@ const PostDetailClient = () => {
   const blogUrl = useGetBlogNameFromUrl(); // 현재 블로그 URL
   const { id } = params;
   const { isOwner } = useIsOwner();
+  const [isPublic, setIsPublic] = useState(true);
 
   useEffect(() => {
     if (!blogUrl) return;
@@ -53,6 +54,8 @@ const PostDetailClient = () => {
 
         const postData = postSnap.data();
         const authorUid = postData?.authorUid;
+
+        setIsPublic(postData.isPublic);
 
         // 작성자 정보 가져오기
         const userCollection = collection(db, "users");
@@ -142,38 +145,47 @@ const PostDetailClient = () => {
       )} commonWrapper`}
     >
       <div className={styles.postTitle}>
-        <h1>{post.title}</h1>
-        {isOwner && (
-          <div className={styles.btnGroup}>
-            <Button
-              variant="contained"
-              onClick={() => router.push(`/blog/${blogUrl}/edit/${id}`)}
-              className={styles.editBtn}
-            >
-              수정
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={onDeletePost}
-              className={styles.deleteBtn}
-            >
-              삭제
-            </Button>
-          </div>
-        )}
+        <h1>
+          {isPublic ? (
+            post.title
+          ) : (
+            <>
+              {/* <FaLock />  */}
+              🔒 {post.title}
+            </>
+          )}
+        </h1>
       </div>
+      {isOwner && (
+        <div className={styles.btnGroup}>
+          <Button
+            variant="contained"
+            onClick={() => router.push(`/blog/${blogUrl}/edit/${id}`)}
+            className={styles.editBtn}
+          >
+            수정
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={onDeletePost}
+            className={styles.deleteBtn}
+          >
+            삭제
+          </Button>
+        </div>
+      )}
       <div className="commonContent">
-        <div style={{ position: "relative", margin: "32px 0 36px" }}>
-          {post.imageUrl && (
+        {post.imageUrl && (
+          <div style={{ position: "relative", margin: "32px 0 36px" }}>
             <Image
               alt={`${post.title} 이미지`}
               src={post.imageUrl}
               width={600}
               height={400}
             />
-          )}
-        </div>
+          </div>
+        )}
         <MarkdownRenderer content={post.content} />
 
         <Button

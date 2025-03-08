@@ -6,7 +6,9 @@
     overflow-wrap: break-word;
     width: 100%; /* 부모를 넘어가지 않도록 제한 */
     padding: 12px 16px;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
+    margin-bottom: 40px;
+
     h2 {
       max-width: 100%;
       white-space: normal; /* 자동 줄바꿈 허용 */

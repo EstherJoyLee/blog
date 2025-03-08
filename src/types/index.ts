@@ -7,7 +7,8 @@ export interface IPostState {
   imageUrl?: string;
   isPublic?: boolean;
   authorUid?: string;
-  createdAt?: Timestamp;
+  createdAt?: string | null | Timestamp;
+  updatedAt?: string | null | Timestamp;
   folderId?: string;
 }
 

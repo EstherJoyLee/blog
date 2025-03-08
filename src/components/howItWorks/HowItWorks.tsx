@@ -19,7 +19,7 @@ const steps = [
   {
     icon: <FaPenFancy />,
     title: "블로그 생성",
-    description: "블로그 제목과 디자인 설정",
+    description: "블로그 제목과 커스텀 url 설정 후 생성",
   },
   {
     icon: <FaRocket />,

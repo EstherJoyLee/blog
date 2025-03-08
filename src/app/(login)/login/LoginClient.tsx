@@ -54,7 +54,6 @@ const LoginClient = () => {
     } catch (err) {
       setIsLoading(false);
       handleAuthError(err);
-      router.push("/");
     }
   };
 
@@ -75,12 +74,11 @@ const LoginClient = () => {
       }
 
       setIsLoading(false);
-      alert(`로그인 성공! 블로그 주소: ${blogUrl}`);
+      alert(`로그인 성공!`);
       redirectUser(blogUrl); // ✅ 로그인 성공 후 블로그 페이지로 이동
     } catch (err) {
       setIsLoading(false);
       handleAuthError(err);
-      router.push("/");
     }
   };
 

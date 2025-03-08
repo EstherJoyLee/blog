@@ -19,8 +19,8 @@ const features = [
   },
   {
     icon: <FaPalette />,
-    title: "다양한 테마 지원",
-    description: "다크/라이트 모드 및 커스텀 스타일",
+    title: "다크/라이트 모드 지원",
+    description: "다크/라이트 모드 지원으로 시력 보호호",
   },
   {
     icon: <FaSearch />,
