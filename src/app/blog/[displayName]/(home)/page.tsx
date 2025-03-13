@@ -1,7 +1,6 @@
 import { adminDB } from "@/firebase/admin";
 import HomeClient from "./HomeClient";
 import { cookies } from "next/headers";
-import { notifyGoogle } from "@/utils/notifyGoogle";
 
 export const revalidate = 60; // ✅ 60초마다 ISR 적용
 
@@ -123,8 +122,6 @@ export default async function HomePage({
   console.log("🔍 최종 userUid: ", userUid);
 
   const posts = await getPosts(resolvedParams.displayName, userUid);
-
-  await notifyGoogle();
 
   return (
     <HomeClient initialPosts={posts} displayName={resolvedParams.displayName} />

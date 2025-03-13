@@ -1,21 +1,29 @@
 import PostListClient from "./PostListClient";
 import { adminDB } from "@/firebase/admin";
-import { notifyGoogle } from "@/utils/notifyGoogle";
 import { cookies } from "next/headers";
 
 export const revalidate = 60; // ISR: 60초마다 정적 페이지 재생성
 
-export const generateStaticParams = async () => {
+export const generateStaticParams = async ({
+  params,
+}: {
+  params: { displayName: string };
+}) => {
   try {
-    const userSnapshot = await adminDB.collection("users").get(); // ✅ Firestore에서 모든 사용자 가져오기
-
+    const userSnapshot = await adminDB.collection("users").get();
     const users = userSnapshot.docs
       .map((doc) => ({
-        displayName: doc.data().blogUrl || "", // ✅ blogUrl 필드 가져오기 (빈 값 방지)
+        params: { displayName: doc.data().blogUrl }, // params 객체 구조로 반환
       }))
-      .filter((user) => user.displayName); // ✅ 빈 값 제거
+      .filter((user) => Boolean(user.params.displayName));
 
     console.log("📌 generateStaticParams - 생성된 경로: ", users);
+    console.log("📌 generateStaticParams - params: ", params);
+    console.log(
+      "📌 generateStaticParams - 생성된 경로: ",
+      JSON.stringify(users, null, 2)
+    );
+
     return users;
   } catch (error) {
     console.error("❌ Error Fetching users for static paths: ", error);
@@ -102,10 +110,13 @@ const getPosts = async (
 };
 
 // ✅ ISR을 적용한 페이지 컴포넌트
-const PostPage = async ({ params }: { params: { displayName?: string } }) => {
+const PostPage = async ({
+  params,
+}: {
+  params: Promise<{ displayName?: string }>;
+}) => {
   const resolvedParams = await params; // ✅ params의 Promise를 해제
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  console.log("📌 Resolved PostPage params:", resolvedParams);
 
   // ✅ `params`가 정상적으로 들어왔는지 확인
   if (!resolvedParams || !resolvedParams.displayName) {
@@ -139,7 +150,7 @@ const PostPage = async ({ params }: { params: { displayName?: string } }) => {
 
       if (data.uid) {
         userUid = data.uid; // ✅ 검증된 사용자 UID 저장
-        console.log("✅ 서버에서 검증된 userUid:", userUid);
+        // console.log("✅ 서버에서 검증된 userUid:", userUid);
       } else {
         console.warn("⚠️ `uid`가 서버 응답에서 없음: ", data);
       }
@@ -149,8 +160,6 @@ const PostPage = async ({ params }: { params: { displayName?: string } }) => {
   } else {
     console.warn("⚠️ `idToken`이 쿠키에서 존재하지 않음.");
   }
-
-  await notifyGoogle();
 
   // ✅ `userUid`를 `getPosts` 함수에 전달
   const posts = await getPosts(resolvedParams.displayName, userUid);
