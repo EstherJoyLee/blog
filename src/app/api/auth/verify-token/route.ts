@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminAuth } from "@/firebase/admin"; // Firebase Admin SDK 사용
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   try {
     const { idToken } = await req.json();
 
@@ -19,4 +19,4 @@ export async function POST(req: Request) {
     console.error("❌ Error verifying token:", error);
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
-}
+};
