@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // console.log("🤢😡😤 Middleware Loaded!");
 
-export function middleware(req: NextRequest) {
+export const middleware = (req: NextRequest) => {
   const { pathname } = req.nextUrl;
   const userId = req.cookies.get("userId")?.value; // 🔥 userId 쿠키를 가져옴
   const pathSegments = pathname.split("/").filter(Boolean);
@@ -41,7 +41,7 @@ export function middleware(req: NextRequest) {
   }
 
   return NextResponse.next();
-}
+};
 
 // ✅ 미들웨어 적용할 경로 설정
 export const config = {

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
 
-export default function HeroSection() {
+const HeroSection = () => {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   const { setRef, handleMouseMove, handleMouseLeave, elements } =
@@ -92,4 +92,6 @@ export default function HeroSection() {
       </div>
     </section>
   );
-}
+};
+
+export default HeroSection;

@@ -5,7 +5,7 @@ import styles from "./Footer.module.scss";
 import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { setThemeClass } from "@/utils/setThemeClass";
 
-export default function Footer() {
+const Footer = () => {
   const { theme, mounted } = useMountedTheme();
 
   if (!mounted) {
@@ -53,4 +53,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

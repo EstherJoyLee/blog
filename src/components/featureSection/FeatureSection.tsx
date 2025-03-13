@@ -35,7 +35,7 @@ const features = [
   },
 ];
 
-export default function FeatureSection() {
+const FeatureSection = () => {
   const { theme, mounted } = useMountedTheme();
 
   if (!mounted) {
@@ -62,4 +62,6 @@ export default function FeatureSection() {
       </div>
     </section>
   );
-}
+};
+
+export default FeatureSection;

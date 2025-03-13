@@ -2,7 +2,7 @@ import { db } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const userId = req.cookies.get("userId")?.value;
   const blogName = req.nextUrl.searchParams.get("blogName");
 
@@ -29,4 +29,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+};

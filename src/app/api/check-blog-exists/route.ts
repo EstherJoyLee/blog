@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/config";
 
-export async function GET(req: Request) {
+export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   console.log(req.url);
   const blogName = searchParams.get("blogName");
@@ -19,4 +19,4 @@ export async function GET(req: Request) {
   }
 
   return NextResponse.json({ exists: true });
-}
+};

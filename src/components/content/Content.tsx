@@ -7,11 +7,11 @@ import styles from "./Content.module.scss";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
 
-export default function Content({
+const Content = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   const pathname = usePathname();
 
   // "/blog/블로그이름" 패턴을 확인 (즉, "/blog"로 시작하면서 "/"가 하나 더 있는 경우만 예외 처리)
@@ -44,4 +44,6 @@ export default function Content({
       )}
     </>
   );
-}
+};
+
+export default Content;

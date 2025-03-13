@@ -7,11 +7,11 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 console.log(`supabaseUrl: ${supabaseUrl}`);
 console.log(`supabaseKey: ${supabaseKey}`);
 
-export default async function uploadImage(
+const uploadImage = async (
   file: File,
   bucketName: string,
   folderPath: string = ""
-): Promise<string | null> {
+): Promise<string | null> => {
   try {
     const user = auth.currentUser;
 
@@ -47,4 +47,6 @@ export default async function uploadImage(
     console.error("Error uploading image:", error);
     return null;
   }
-}
+};
+
+export default uploadImage;

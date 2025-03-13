@@ -8,9 +8,9 @@ export type MagneticElement = {
   className?: string;
 };
 
-export function useMagneticEffect<T extends HTMLElement>(
+export const useMagneticEffect = <T extends HTMLElement>(
   elements: MagneticElement[]
-) {
+) => {
   const elementRefs = useRef<(T | null)[]>([]);
 
   const setRef = (index: number) => (el: T | null) => {
@@ -33,4 +33,4 @@ export function useMagneticEffect<T extends HTMLElement>(
   };
 
   return { setRef, handleMouseMove, handleMouseLeave, elements };
-}
+};

@@ -33,7 +33,7 @@ const steps = [
   },
 ];
 
-export default function HowItWorks() {
+const HowItWorks = () => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -93,4 +93,6 @@ export default function HowItWorks() {
       </div>
     </section>
   );
-}
+};
+
+export default HowItWorks;

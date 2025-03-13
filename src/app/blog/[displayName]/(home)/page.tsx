@@ -81,11 +81,11 @@ const getPosts = async (displayName?: string, userUid?: string | null) => {
   }
 };
 
-export default async function HomePage({
+const HomePage = async ({
   params,
 }: {
   params: Promise<{ displayName?: string }>;
-}) {
+}) => {
   const resolvedParams = await params; // ✅ `params`를 `await`로 해제
   console.log("📌 HomePage 실행 - params:", resolvedParams);
 
@@ -126,4 +126,6 @@ export default async function HomePage({
   return (
     <HomeClient initialPosts={posts} displayName={resolvedParams.displayName} />
   );
-}
+};
+
+export default HomePage;

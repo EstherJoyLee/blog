@@ -4,7 +4,7 @@ import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import styles from "./ThemeToggleBtn.module.scss";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 
-export default function ThemeToggle() {
+const ThemeToggle = () => {
   const { theme, setTheme, mounted } = useMountedTheme();
 
   if (!mounted) {
@@ -23,4 +23,6 @@ export default function ThemeToggle() {
       )}
     </button>
   );
-}
+};
+
+export default ThemeToggle;
