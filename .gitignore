@@ -36,3 +36,4 @@ Thumbs.db
 .gitignore
 
 .vercel
+.env*.local
