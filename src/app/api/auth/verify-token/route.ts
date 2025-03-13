@@ -6,9 +6,17 @@ export const runtime = "nodejs"; // Edge Runtime 문제 해결
 export const POST = async (req: Request) => {
   try {
     console.log("📥 요청 수신:", req.method, req.headers.get("content-type"));
-    if (req.headers.get("content-type") !== "application/json") {
+    if (req.headers.get("content-type")?.includes("application/json")) {
       return NextResponse.json(
         { error: "Invalid content type" },
+        { status: 400 }
+      );
+    }
+
+    const bodyText = await req.text();
+    if (!bodyText) {
+      return NextResponse.json(
+        { error: "Empty request body" },
         { status: 400 }
       );
     }
@@ -22,8 +30,8 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    const { idToken } = body;
-    if (!idToken) {
+    const { idToken } = body ?? {};
+    if (typeof idToken !== "string" || !idToken.trim()) {
       return NextResponse.json({ error: "Missing token" }, { status: 400 });
     }
 
