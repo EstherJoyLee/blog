@@ -59,17 +59,9 @@ Joylog는 **Firebase 기반의 개인 블로그 플랫폼**으로, **Markdown �
 
 1️⃣ **패키지 설치**
 
-bash
-
-복사편집
-
 `npm install`
 
 2️⃣ **개발 서버 실행**
-
-bash
-
-복사편집
 
 `npm run dev`
 
@@ -104,17 +96,9 @@ bash
 
 1️⃣ **Fork & Clone**
 
-bash
-
-복사편집
-
 `git clone https://github.com/EstherJoyLee/blog.git`
 
 2️⃣ **새로운 기능 개발**
-
-bash
-
-복사편집
 
 `git checkout -b feature/새로운-기능`
 
