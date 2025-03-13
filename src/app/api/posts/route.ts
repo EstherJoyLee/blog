@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminDB } from "@/firebase/admin"; // ✅ Firebase Admin SDK 사용
 
-export async function GET(req: Request) {
+export const GET = async (req: Request) => {
   try {
     const { searchParams } = new URL(req.url);
     const displayName = searchParams.get("displayName");
@@ -102,4 +102,4 @@ export async function GET(req: Request) {
       { status: 500 }
     );
   }
-}
+};
