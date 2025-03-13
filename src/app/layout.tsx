@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     apple: "/favicon/apple-icon-60x60.png",
   },
   verification: {
-    google: "ihrT54paPDZpR99DYoszaBuiVsenXK0puPo35Oxuk6g",
+    google: "jdlxEjczNMISFvzbNJ5vSetnBoNsTxgrfHwn1YTZqHE",
   },
 };
 
