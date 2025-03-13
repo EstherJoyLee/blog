@@ -1,10 +1,26 @@
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/firebase/admin"; // Firebase Admin SDK 사용
+import { adminAuth } from "@/firebase/admin";
+
+export const runtime = "nodejs"; // Edge Runtime 문제 해결
 
 export const POST = async (req: Request) => {
   try {
-    const { idToken } = await req.json();
+    if (req.headers.get("content-type") !== "application/json") {
+      return NextResponse.json(
+        { error: "Invalid content type" },
+        { status: 400 }
+      );
+    }
 
+    let body;
+    try {
+      body = await req.json();
+    } catch (jsonError) {
+      console.error("❌ JSON parsing error:", jsonError);
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const { idToken } = body;
     if (!idToken) {
       return NextResponse.json({ error: "Missing token" }, { status: 400 });
     }
