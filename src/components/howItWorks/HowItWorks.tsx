@@ -64,7 +64,6 @@ export default function HowItWorks() {
     <section
       className={`${setThemeClass(theme, styles.darkHowItWorks, [
         styles.howItWorks,
-        "flex flex-col items-center bg-gradient-to-b from-white to-primary py-12",
       ])}`}
     >
       <h2 className={`${styles.title} "text-3xl font-bold mb-10 text-center"`}>
