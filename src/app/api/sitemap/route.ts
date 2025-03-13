@@ -40,7 +40,7 @@ export async function GET() {
       // 🔹 XML 형태로 데이터 추가
       urls.push(`
         <url>
-          <loc>https://joylog.vercel.app/blog/post/${blogUrl}/${doc.id}</loc>
+          <loc>https://joylog.vercel.app/blog/${blogUrl}/post/${doc.id}</loc>
           <lastmod>${new Date(createdAt.seconds * 1000).toISOString()}</lastmod>
         </url>
       `);
