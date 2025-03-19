@@ -8,14 +8,14 @@ export const GET = async (req: Request) => {
     const userUid = searchParams.get("userUid");
     const lastVisibleId = searchParams.get("lastVisibleId");
 
-    console.log(
-      "📌 API 요청 받음 - displayName:",
-      displayName,
-      "lastVisibleId:",
-      lastVisibleId,
-      "userUid:",
-      userUid
-    );
+    // console.log(
+    //   "📌 API 요청 받음 - displayName:",
+    //   displayName,
+    //   "lastVisibleId:",
+    //   lastVisibleId,
+    //   "userUid:",
+    //   userUid
+    // );
 
     if (!displayName) {
       console.error("❌ Error: displayName이 없습니다.");
@@ -39,9 +39,9 @@ export const GET = async (req: Request) => {
     const authorUid = userSnapshot.docs[0].id;
     const isBlogOwner = userUid === authorUid; // ✅ 서버에서 userUid 검증
 
-    console.log(
-      `🔍 isBlogOwner: ${isBlogOwner}, userUid: ${userUid}, authorUid: ${authorUid}`
-    );
+    // console.log(
+    //   `🔍 isBlogOwner: ${isBlogOwner}, userUid: ${userUid}, authorUid: ${authorUid}`
+    // );
 
     let postsQuery = adminDB
       .collection("posts")
@@ -61,7 +61,7 @@ export const GET = async (req: Request) => {
         .get();
       if (lastDocSnap.exists) {
         postsQuery = postsQuery.startAfter(lastDocSnap);
-        console.log("✅ `startAfter()` 적용됨 - lastVisibleId:", lastVisibleId);
+        // console.log("✅ `startAfter()` 적용됨 - lastVisibleId:", lastVisibleId);
       } else {
         console.warn("⚠️ lastVisibleId에 해당하는 문서 없음:", lastVisibleId);
       }
@@ -83,7 +83,7 @@ export const GET = async (req: Request) => {
         : null,
     }));
 
-    console.log("✅ 가져온 게시물 개수:", posts.length);
+    // console.log("✅ 가져온 게시물 개수:", posts.length);
 
     return NextResponse.json(
       {

@@ -105,7 +105,7 @@ const Aside = () => {
     setOpenAside(false);
     setOpenFolders(null);
     setSearchQueryState("");
-    console.log("pathname: ", pathname);
+    // console.log("pathname: ", pathname);
   }, [pathname]);
 
   const { theme, mounted } = useMountedTheme();

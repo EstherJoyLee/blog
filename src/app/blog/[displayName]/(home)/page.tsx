@@ -14,7 +14,7 @@ export const generateStaticParams = async () => {
       }))
       .filter((user) => user.displayName); // ✅ 빈 값 제거
 
-    console.log("📌 generateStaticParams - 생성된 경로: ", users);
+    // console.log("📌 generateStaticParams - 생성된 경로: ", users);
     return users;
   } catch (error) {
     console.error("❌ Error Fetching users for static paths: ", error);
@@ -23,12 +23,12 @@ export const generateStaticParams = async () => {
 };
 
 const getPosts = async (displayName?: string, userUid?: string | null) => {
-  console.log(
-    "📌 getPosts 실행 - displayName:",
-    displayName,
-    "userUid:",
-    userUid
-  );
+  // console.log(
+  //   "📌 getPosts 실행 - displayName:",
+  //   displayName,
+  //   "userUid:",
+  //   userUid
+  // );
 
   if (!displayName) {
     console.error("❌ Error: displayName 값이 없습니다!");
@@ -49,9 +49,9 @@ const getPosts = async (displayName?: string, userUid?: string | null) => {
     const authorUid = userSnapshot.docs[0].id;
     const isBlogOwner = userUid === authorUid; // ✅ 블로그 주인 여부 확인
 
-    console.log(
-      `✅ isBlogOwner: ${isBlogOwner}, userUid: ${userUid}, authorUid: ${authorUid}`
-    );
+    // console.log(
+    //   `✅ isBlogOwner: ${isBlogOwner}, userUid: ${userUid}, authorUid: ${authorUid}`
+    // );
 
     let postsQuery = adminDB
       .collection("posts")
@@ -87,7 +87,7 @@ const HomePage = async ({
   params: Promise<{ displayName?: string }>;
 }) => {
   const resolvedParams = await params; // ✅ `params`를 `await`로 해제
-  console.log("📌 HomePage 실행 - params:", resolvedParams);
+  // console.log("📌 HomePage 실행 - params:", resolvedParams);
 
   if (!resolvedParams?.displayName) {
     console.error("❌ Error: params.displayName이 없습니다!", resolvedParams);
@@ -110,7 +110,7 @@ const HomePage = async ({
       const data = await response.json();
       if (data.uid) {
         userUid = data.uid;
-        console.log("✅ 서버에서 검증된 userUid:", userUid);
+        // console.log("✅ 서버에서 검증된 userUid:", userUid);
       }
     } catch (error) {
       console.error("❌ 사용자 인증 오류:", error);
@@ -119,7 +119,7 @@ const HomePage = async ({
     console.warn("⚠️ `idToken`이 쿠키에서 존재하지 않음.");
   }
 
-  console.log("🔍 최종 userUid: ", userUid);
+  // console.log("🔍 최종 userUid: ", userUid);
 
   const posts = await getPosts(resolvedParams.displayName, userUid);
 

@@ -37,11 +37,9 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
     const checkAuth = async () => {
       const user = auth.currentUser;
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      console.log("🔍PostListClient에서 checkAuth 실행되는지 체크");
       if (user) {
-        console.log("🔍PostListClient에서 checkAuth user 존재 여부 확인");
         const idToken = await user.getIdToken(); // ✅ 사용자 ID 토큰 가져오기
-        console.log("🔑 가져온 idToken:", idToken);
+        // console.log("🔑 가져온 idToken:", idToken);
 
         // ✅ 서버에 ID 토큰을 보내 사용자 인증 확인
         const response = await fetch(`${API_BASE_URL}/api/auth/verify-token`, {
@@ -53,7 +51,7 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
         const data = await response.json();
         if (data.uid) {
           setUserUid(data.uid); // ✅ 검증된 UID 저장
-          console.log("✅ 서버에서 검증된 UID:", data.uid);
+          // console.log("✅ 서버에서 검증된 UID:", data.uid);
         } else {
           console.warn("⚠️ 서버에서 인증되지 않은 사용자.");
         }

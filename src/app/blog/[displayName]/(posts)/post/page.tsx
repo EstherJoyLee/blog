@@ -13,11 +13,11 @@ export const generateStaticParams = async () => {
       }))
       .filter((user) => Boolean(user.displayName));
 
-    console.log("📌 generateStaticParams - 생성된 경로: ", users);
-    console.log(
-      "📌 generateStaticParams - 생성된 경로: ",
-      JSON.stringify(users, null, 2)
-    );
+    // console.log("📌 generateStaticParams - 생성된 경로: ", users);
+    // console.log(
+    //   "📌 generateStaticParams - 생성된 경로: ",
+    //   JSON.stringify(users, null, 2)
+    // );
 
     return users;
   } catch (error) {
@@ -31,24 +31,24 @@ const getPosts = async (
   displayName: string | undefined,
   userUid: string | null
 ) => {
-  console.log(
-    "📌 getPosts 실행됨 - displayName:",
-    displayName,
-    "userUid:",
-    userUid
-  );
+  // console.log(
+  //   "📌 getPosts 실행됨 - displayName:",
+  //   displayName,
+  //   "userUid:",
+  //   userUid
+  // );
   if (!displayName) {
     console.error("❌ Error: displayName 값이 없습니다!");
     return [];
   }
 
   try {
-    console.log(
-      "📌 getPosts 실행됨 - displayName:",
-      displayName,
-      "userUid:",
-      userUid
-    );
+    // console.log(
+    //   "📌 getPosts 실행됨 - displayName:",
+    //   displayName,
+    //   "userUid:",
+    //   userUid
+    // );
 
     const userSnapshot = await adminDB
       .collection("users")
@@ -66,9 +66,9 @@ const getPosts = async (
     const authorUid = userSnapshot.docs[0].id;
     const isBlogOwner = userUid === authorUid;
 
-    console.log(
-      `isBlogOwner: ${isBlogOwner}, userUid: ${userUid}, authorUid: ${authorUid}`
-    );
+    // console.log(
+    //   `isBlogOwner: ${isBlogOwner}, userUid: ${userUid}, authorUid: ${authorUid}`
+    // );
 
     let postsQuery = adminDB
       .collection("posts")
@@ -141,7 +141,7 @@ const PostPage = async ({
       }
 
       const data = await response.json();
-      console.log("✅ 서버 응답: ", data);
+      // console.log("✅ 서버 응답: ", data);
 
       if (data.uid) {
         userUid = data.uid; // ✅ 검증된 사용자 UID 저장

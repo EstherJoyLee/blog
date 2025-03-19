@@ -95,7 +95,7 @@ const SignupClient = () => {
       const user = userCredential.user;
 
       if (!user) throw new Error("Firebase에서 사용자 생성에 실패했습니다.");
-      console.log("✅ Firebase Authentication 등록 성공:", user.uid);
+      // console.log("✅ Firebase Authentication 등록 성공:", user.uid);
 
       // Firestore 저장 (실패 가능성 있음)
       try {
@@ -285,17 +285,6 @@ const SignupClient = () => {
             onChange={(e) => setNickName(e.target.value)}
             isRequired
           />
-          {/* 
-          <Input
-            label="프로필 이미지"
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setProfileImage(e.target.files[0]);
-              }
-            }}
-          /> */}
           <TermsAgreement
             termsAgreed={termsAgreed}
             setTermsAgreed={setTermsAgreed}

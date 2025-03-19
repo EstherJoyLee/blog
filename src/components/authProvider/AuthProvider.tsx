@@ -10,7 +10,7 @@ const AuthProvider = () => {
       const user = auth.currentUser;
       if (user) {
         const idToken = await user.getIdToken(); // ✅ Firebase에서 `idToken` 가져오기
-        console.log("🔑 저장된 idToken:", idToken);
+        // console.log("🔑 저장된 idToken:", idToken);
 
         // ✅ 쿠키에 `idToken` 저장 (1일 동안 유지)
         Cookies.set("idToken", idToken, {

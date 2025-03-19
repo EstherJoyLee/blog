@@ -85,7 +85,7 @@ const Header = () => {
   useEffect(() => {
     // 페이지 변경될 때 상태 초기화
     setMenuOpen(false);
-    console.log("pathname: ", pathname);
+    // console.log("pathname: ", pathname);
   }, [pathname]);
   const { theme, mounted } = useMountedTheme();
 

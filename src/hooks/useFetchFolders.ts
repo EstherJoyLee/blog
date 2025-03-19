@@ -24,7 +24,7 @@ const useFetchFolders = () => {
         );
 
         const foldersSnapshot = await getDocs(q);
-        console.log("🐰blogUrl:", blogUrl);
+        // console.log("🐰blogUrl:", blogUrl);
         const foldersData = foldersSnapshot.docs.map((doc) => ({
           id: doc.id,
           name: doc.data().name,
@@ -32,7 +32,7 @@ const useFetchFolders = () => {
           blogUrl: doc.data().blogUrl,
         }));
         dispatch(SET_FOLDERS(foldersData));
-        console.log("foldersData: ", foldersData);
+        // console.log("foldersData: ", foldersData);
       } catch (error) {
         console.error("폴더를 가져오는 중 오류 발생: ", error);
       } finally {

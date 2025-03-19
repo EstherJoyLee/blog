@@ -21,10 +21,12 @@ import styles from "./CreatePost.module.scss";
 import { setThemeClass } from "@/utils/setThemeClass";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import CloseIcon from "@mui/icons-material/Close";
+import Loader from "@/components/loader/Loader";
 
 const CreatePostClient = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
@@ -39,7 +41,7 @@ const CreatePostClient = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const user = auth.currentUser;
 
@@ -51,7 +53,7 @@ const CreatePostClient = () => {
       if (image) {
         // 이미지 업로드 실행
         const uploadedUrl = await uploadImage(image, "postImages", "images/");
-        console.log("uploadedUrl: ", uploadedUrl);
+        // console.log("uploadedUrl: ", uploadedUrl);
         if (uploadedUrl) {
           imageUrl = uploadedUrl;
           dispatch(setPublicUrl(imageUrl));
@@ -80,11 +82,13 @@ const CreatePostClient = () => {
 
       if (!title || !content) {
         alert("제목과 내용은 필수 입력 항목입니다.");
+        setLoading(false);
         return;
       }
 
       if (image && !imageUrl) {
         alert("이미지를 업로드해 주세요.");
+        setLoading(false);
         return;
       }
 
@@ -92,6 +96,8 @@ const CreatePostClient = () => {
       router.push(`/blog/${blogUrl}/post`);
     } catch (error) {
       console.error("게시물 작성 중 오류:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,6 +111,7 @@ const CreatePostClient = () => {
 
   return (
     <FormLayout title="게시물 작성" isPost>
+      {loading && <Loader />}
       <form
         onSubmit={handleSubmit}
         className={setThemeClass(

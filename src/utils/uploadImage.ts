@@ -4,8 +4,6 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY ?? "";
 const supabase = createClient(supabaseUrl, supabaseKey);
-console.log(`supabaseUrl: ${supabaseUrl}`);
-console.log(`supabaseKey: ${supabaseKey}`);
 
 const uploadImage = async (
   file: File,
@@ -20,7 +18,6 @@ const uploadImage = async (
     }
 
     const fileName = `${folderPath}${Date.now()}_${file.name}`;
-    console.log("fileName: ", fileName);
     const { error } = await supabase.storage
       .from(bucketName)
       .upload(fileName, file, {

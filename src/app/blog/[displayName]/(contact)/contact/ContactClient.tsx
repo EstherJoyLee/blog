@@ -56,7 +56,7 @@ const ContactForm = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // setIsLoading(true);
-    console.log("blogOwnerEmail: ", blogOwnerEmail);
+    // console.log("blogOwnerEmail: ", blogOwnerEmail);
 
     if (!blogOwnerEmail) {
       alert("블로그 주인의 이메일을 찾을 수 없습니다.");

@@ -67,9 +67,9 @@ const PostDetailClient = () => {
 
         const authorData = authorSnapshot.docs[0].data();
         const authorBlogUrl = authorData.blogUrl; // 작성자의 블로그 URL
-        console.log("authorBlogUrl: ", authorBlogUrl);
-        console.log("blogUrl: ", blogUrl);
-        console.log("authorBlogUrl === blogUrl", authorBlogUrl === blogUrl);
+        // console.log("authorBlogUrl: ", authorBlogUrl);
+        // console.log("blogUrl: ", blogUrl);
+        // console.log("authorBlogUrl === blogUrl", authorBlogUrl === blogUrl);
 
         // 블로그 URL 비교
         if (blogUrl && authorBlogUrl !== blogUrl) {

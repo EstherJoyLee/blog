@@ -4,7 +4,7 @@ import { db } from "@/firebase/config";
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
-  console.log(req.url);
+  // console.log(req.url);
   const blogName = searchParams.get("blogName");
 
   if (!blogName) {

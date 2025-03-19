@@ -44,10 +44,10 @@ const useFetchPostsByFolder = (folderId: string) => {
         const postsCollection = collection(db, "posts");
         let postsQuery;
 
-        console.log(
-          "currentUser?.uid === authorUid: ",
-          currentUser?.uid === authorUid
-        );
+        // console.log(
+        //   "currentUser?.uid === authorUid: ",
+        //   currentUser?.uid === authorUid
+        // );
 
         // 현재 사용자가 존재하는지 확인
         if (currentUser?.uid === authorUid) {
@@ -71,7 +71,7 @@ const useFetchPostsByFolder = (folderId: string) => {
         }
 
         const querySnapshot = await getDocs(postsQuery);
-        console.log("postsQuery: ", querySnapshot.docs);
+        // console.log("postsQuery: ", querySnapshot.docs);
 
         const fetchedPosts = querySnapshot.docs.map((doc) => ({
           id: doc.id,

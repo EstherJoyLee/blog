@@ -109,7 +109,7 @@ const Folder = ({ folders }: IFolderProps) => {
       const postsCollection = collection(db, "posts");
       const postsQuery = query(postsCollection, where("folderId", "==", id));
       const postSnapshot = await getDocs(postsQuery);
-      console.log("💡하위 게시물 목록 가져오기 성공!");
+      // console.log("💡하위 게시물 목록 가져오기 성공!");
 
       postSnapshot.forEach((doc) => {
         batch.delete(doc.ref);
