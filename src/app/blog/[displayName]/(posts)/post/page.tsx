@@ -4,21 +4,16 @@ import { cookies } from "next/headers";
 
 export const revalidate = 60; // ISR: 60초마다 정적 페이지 재생성
 
-export const generateStaticParams = async ({
-  params,
-}: {
-  params: { displayName: string };
-}) => {
+export const generateStaticParams = async () => {
   try {
     const userSnapshot = await adminDB.collection("users").get();
     const users = userSnapshot.docs
       .map((doc) => ({
-        params: { displayName: doc.data().blogUrl }, // params 객체 구조로 반환
+        displayName: doc.data().blogUrl, // params 객체 구조로 반환
       }))
-      .filter((user) => Boolean(user.params.displayName));
+      .filter((user) => Boolean(user.displayName));
 
     console.log("📌 generateStaticParams - 생성된 경로: ", users);
-    console.log("📌 generateStaticParams - params: ", params);
     console.log(
       "📌 generateStaticParams - 생성된 경로: ",
       JSON.stringify(users, null, 2)
