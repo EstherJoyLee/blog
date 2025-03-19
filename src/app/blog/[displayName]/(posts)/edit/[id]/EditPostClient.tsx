@@ -17,10 +17,12 @@ import FolderSelect from "@/components/folders/FolderSelect";
 import { selectFolderList } from "@/redux/slice/folderSlice";
 import useFetchFolders from "@/hooks/useFetchFolders";
 import { useParams } from "next/navigation";
+import Loader from "@/components/loader/Loader";
 
 const EditPostClient = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
@@ -58,9 +60,9 @@ const EditPostClient = () => {
   }, [postId]);
 
   // ✅ 게시물 수정 함수
-  console.log("image: ", image);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const user = auth.currentUser;
@@ -90,10 +92,12 @@ const EditPostClient = () => {
 
       if (!title || !content) {
         alert("제목과 내용은 필수 입력 항목입니다.");
+        setLoading(false);
         return;
       }
       if (image && !imageUrl) {
         alert("이미지를 업로드해 주세요.");
+        setLoading(false);
         return;
       }
 
@@ -101,6 +105,9 @@ const EditPostClient = () => {
       router.push(`/blog/${blogUrl}/post`);
     } catch (error) {
       console.error("게시물 수정 중 오류 발생:", error);
+    } finally {
+      setLoading(false);
+      console.log("loading:", loading);
     }
   };
 
@@ -143,6 +150,7 @@ const EditPostClient = () => {
 
   return (
     <FormLayout title="게시물 수정" isPost>
+      {loading && <Loader />}
       <form onSubmit={handleSubmit}>
         <Input
           type="text"

@@ -97,6 +97,7 @@ const CreatePostClient = () => {
     } catch (error) {
       console.error("게시물 작성 중 오류:", error);
     } finally {
+      console.log("loading:", loading);
       setLoading(false);
     }
   };
