@@ -49,7 +49,7 @@ const CheckIsOwnerProvider = ({ children }: { children: React.ReactNode }) => {
 
       try {
         if (!blogNameFromUrl || blogNameFromUrl.trim() === "") {
-          console.error("🚨 blogNameFromUrl is undefined or empty!");
+          // console.error("🚨 blogNameFromUrl is undefined or empty!");
           return;
         }
         const res = await fetch(`/api/check-owner?blogName=${blogNameFromUrl}`);
