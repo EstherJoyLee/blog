@@ -10,13 +10,6 @@ import Image from "next/image";
 import MarkdownRenderer from "@/components/markdownRenderer/MarkdownRenderer";
 import { IPostState } from "@/types";
 
-// interface Post {
-//   id: string;
-//   title: string;
-//   imageUrl?: string; // Optional property for image URL
-//   content: string; // Property for post content
-// }
-
 interface PostListClientProps {
   initialPosts: IPostState[];
   displayName: string;
@@ -155,6 +148,7 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
               onClick={fetchMorePosts}
               disabled={loading}
               className={styles.loadMoreBtn}
+              aria-label="더보기 버튼"
             >
               {loading ? "로딩 중..." : "더보기"}
             </button>

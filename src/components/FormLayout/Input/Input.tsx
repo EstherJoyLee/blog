@@ -99,6 +99,7 @@ const Input = ({
                       variant="contained"
                       color="error"
                       onClick={handleDeleteImage}
+                      aria-label="이미지 삭제 버튼"
                     >
                       이미지 삭제
                     </Button>
@@ -143,6 +144,7 @@ const Input = ({
                   <IconButton
                     onClick={() => setShowPassword((prev) => !prev)}
                     className={styles.inputButton}
+                    aria-label="비밀번호 보기 토글 버튼"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>

@@ -73,6 +73,7 @@ const HeroSection = () => {
                 onMouseMove={handleMouseMove(index)}
                 onMouseLeave={handleMouseLeave(index)}
                 href="/signup"
+                aria-label="회원가입 버튼"
               >
                 {text}
               </a>

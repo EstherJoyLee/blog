@@ -161,6 +161,7 @@ const CreatePostClient = () => {
             folders={folders}
           />
           <IconButton
+            aria-label="폴더 관리창 열기 버튼"
             className={styles.settingButton}
             onClick={() => setFolderModalOpen(true)}
           >
@@ -181,7 +182,10 @@ const CreatePostClient = () => {
               }}
             >
               폴더 관리
-              <IconButton onClick={() => setFolderModalOpen(false)}>
+              <IconButton
+                aria-label="폴더 관리창 닫기 버튼"
+                onClick={() => setFolderModalOpen(false)}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
@@ -190,7 +194,11 @@ const CreatePostClient = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Button type="submit" variant="contained">
+        <Button
+          type="submit"
+          variant="contained"
+          aria-label="게시물 작성 완료 버튼"
+        >
           작성
         </Button>
       </form>

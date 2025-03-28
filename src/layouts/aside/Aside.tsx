@@ -149,6 +149,7 @@ const Aside = () => {
                         <button
                           className={styles.folderBtn}
                           onClick={() => handleFolderClick(folder.id)}
+                          aria-label="하위 게시물 열기 버튼"
                         >
                           {folder.name}
                         </button>
@@ -209,6 +210,7 @@ const Aside = () => {
                   <CustomButton
                     text="포스트 생성"
                     variant="contained"
+                    aria-label="포스트 생성 버튼"
                     color="primary"
                     onClick={() => {
                       router.push(`/blog/${blogUrl}/create`);

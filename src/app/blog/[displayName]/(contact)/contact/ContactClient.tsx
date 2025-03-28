@@ -127,7 +127,7 @@ const ContactForm = () => {
             placeholder="내용"
             label="이메일 내용"
           />
-          <Button variant="contained" type="submit">
+          <Button variant="contained" aria-label="전송 버튼" type="submit">
             전송
           </Button>
         </form>

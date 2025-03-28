@@ -162,6 +162,7 @@ const PostDetailClient = () => {
             variant="contained"
             onClick={() => router.push(`/blog/${blogUrl}/edit/${id}`)}
             className={styles.editBtn}
+            aria-label="게시물 수정하기 버튼"
           >
             수정
           </Button>
@@ -170,6 +171,7 @@ const PostDetailClient = () => {
             color="error"
             onClick={onDeletePost}
             className={styles.deleteBtn}
+            aria-label="게시물 삭제하기 버튼"
           >
             삭제
           </Button>
@@ -191,6 +193,7 @@ const PostDetailClient = () => {
         <Button
           onClick={() => router.push(`/blog/${blogUrl}/post`)}
           className={styles.commonBtn}
+          aria-label="게시물 목록으로 돌아가기 버튼"
         >
           목록으로 돌아가기
         </Button>

@@ -14,6 +14,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="다크/라이트 모드 토글 버튼"
       className={`${styles.themeToggleBtn} p-2 rounded-full bg-gray-800 dark:bg-gray-200 text-white dark:text-black transition-colors duration-300`}
     >
       {theme === "dark" ? (

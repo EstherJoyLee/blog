@@ -194,7 +194,11 @@ const EditPostClient = () => {
           />
         </div>
 
-        <Button variant="contained" type="submit">
+        <Button
+          variant="contained"
+          type="submit"
+          aria-label="게시물 수정 완료 버튼"
+        >
           수정
         </Button>
       </form>

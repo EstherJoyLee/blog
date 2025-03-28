@@ -149,7 +149,9 @@ const Folder = ({ folders }: IFolderProps) => {
             value={newFolderName}
             onChange={(e) => setNewFolderName(e.target.value)}
           />
-          <Button onClick={handleAddFolder}>폴더 추가</Button>
+          <Button onClick={handleAddFolder} aria-label="폴더 추가하기 버튼">
+            폴더 추가
+          </Button>
         </div>
 
         <div className={styles.folderList}>
@@ -162,12 +164,18 @@ const Folder = ({ folders }: IFolderProps) => {
                     onChange={(e) => setEditedName(e.target.value)}
                   />
                   <div className={styles.folderButtons}>
-                    <Button onClick={handleUpdateFolder}>완료</Button>
+                    <Button
+                      onClick={handleUpdateFolder}
+                      aria-label="폴더 추가 완료 버튼"
+                    >
+                      완료
+                    </Button>
                     <Button
                       onClick={() => {
                         setEditingFolder(null);
                         setEditedName("");
                       }}
+                      aria-label="폴더 추가 취소 버튼"
                     >
                       취소
                     </Button>
@@ -177,10 +185,16 @@ const Folder = ({ folders }: IFolderProps) => {
                 <div>
                   <span>{folder.name}</span>
                   <div className={styles.folderButtons}>
-                    <Button onClick={() => setEditingFolder(folder.id)}>
+                    <Button
+                      onClick={() => setEditingFolder(folder.id)}
+                      aria-label="폴더 이름 수정 완료 버튼"
+                    >
                       수정
                     </Button>
-                    <Button onClick={() => handleDeleteFolder(folder.id)}>
+                    <Button
+                      onClick={() => handleDeleteFolder(folder.id)}
+                      aria-label="폴더 삭제 버튼"
+                    >
                       삭제
                     </Button>
                   </div>

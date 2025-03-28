@@ -19,16 +19,25 @@ const Footer = () => {
       <div className={styles.content}>
         <h2 className={styles.logo}>블로그</h2>
         <nav className={styles.nav}>
-          <a href="#">FAQ</a>
-          <a href="#">블로그</a>
-          <a href="#">이용약관</a>
-          <a href="#">개인정보 처리방침</a>
+          <a href="#" aria-label="FAQ">
+            FAQ
+          </a>
+          <a href="#" aria-label="블로그 바로가기">
+            블로그
+          </a>
+          <a href="#" aria-label="이용약관">
+            이용약관
+          </a>
+          <a href="#" aria-label="개인정보 처리방침침">
+            개인정보 처리방침
+          </a>
         </nav>
         <div className={styles.socials}>
           <a
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="github 링크크"
           >
             <FaGithub />
           </a>
@@ -36,6 +45,7 @@ const Footer = () => {
             href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="twitter link"
           >
             <FaTwitter />
           </a>
@@ -43,6 +53,7 @@ const Footer = () => {
             href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="linkedin link"
           >
             <FaLinkedin />
           </a>
