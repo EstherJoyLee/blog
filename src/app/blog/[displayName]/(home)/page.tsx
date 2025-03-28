@@ -55,7 +55,7 @@ const HomePage = async ({
 
   // console.log("🔍 최종 userUid: ", userUid);
 
-  const posts = await getPosts(resolvedParams.displayName, userUid);
+  const posts = await getPosts(10, resolvedParams.displayName, userUid);
 
   return (
     <HomeClient initialPosts={posts} displayName={resolvedParams.displayName} />

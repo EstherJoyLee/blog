@@ -1,82 +1,15 @@
 import PostListClient from "./PostListClient";
-import { adminDB } from "@/firebase/admin";
+import { getPosts } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 
 export const revalidate = 60; // ISR: 60초마다 정적 페이지 재생성
 
 export const generateStaticParams = async () => {
   try {
-    const userSnapshot = await adminDB.collection("users").get();
-    const users = userSnapshot.docs
-      .map((doc) => ({
-        displayName: doc.data().blogUrl, // params 객체 구조로 반환
-      }))
-      .filter((user) => Boolean(user.displayName));
-
-    return users;
+    const { getUsersForStaticParams } = await import("@/lib/firebase/admin");
+    return await getUsersForStaticParams();
   } catch (error) {
     console.error("❌ Error Fetching users for static paths: ", error);
-    return [];
-  }
-};
-
-// ✅ Firestore에서 게시물 가져오기
-const getPosts = async (
-  displayName: string | undefined,
-  userUid: string | null
-) => {
-  if (!displayName) {
-    console.error("❌ Error: displayName 값이 없습니다!");
-    return [];
-  }
-
-  try {
-    const userSnapshot = await adminDB
-      .collection("users")
-      .where("blogUrl", "==", displayName)
-      .get();
-
-    if (userSnapshot.empty) {
-      console.warn(
-        "⚠️ 해당 displayName을 가진 사용자가 없습니다:",
-        displayName
-      );
-      return [];
-    }
-
-    const authorUid = userSnapshot.docs[0].id;
-    const isBlogOwner = userUid === authorUid;
-
-    let postsQuery = adminDB
-      .collection("posts")
-      .where("authorUid", "==", authorUid)
-      .orderBy("createdAt", "desc")
-      .limit(5);
-
-    if (!isBlogOwner) {
-      postsQuery = postsQuery.where("isPublic", "==", true);
-    }
-    const postSnapshot = await postsQuery.get();
-
-    return postSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        title: data.title || "제목 없음",
-        content: data.content || "내용 없음",
-        imageUrl: data.imageUrl || null,
-        isPublic: data.isPublic || false,
-        authorUid: data.authorUid || "",
-        createdAt: data.createdAt
-          ? new Date(data.createdAt.seconds * 1000).toISOString()
-          : null,
-        updatedAt: data.updatedAt
-          ? new Date(data.updatedAt.seconds * 1000).toISOString()
-          : null,
-      };
-    });
-  } catch (error) {
-    console.error("❌ Error fetching posts:", error);
     return [];
   }
 };
@@ -134,7 +67,7 @@ const PostPage = async ({
   }
 
   // ✅ `userUid`를 `getPosts` 함수에 전달
-  const posts = await getPosts(resolvedParams.displayName, userUid);
+  const posts = await getPosts(5, resolvedParams.displayName, userUid);
   return (
     <PostListClient
       initialPosts={posts}

@@ -1,16 +1,10 @@
 import { adminDB } from "@/firebase/admin";
 
 export const getPosts = async (
+  limit: number,
   displayName?: string,
   userUid?: string | null
 ) => {
-  // console.log(
-  //   "📌 getPosts 실행 - displayName:",
-  //   displayName,
-  //   "userUid:",
-  //   userUid
-  // );
-
   if (!displayName) {
     console.error("❌ Error: displayName 값이 없습니다!");
     return [];
@@ -38,7 +32,7 @@ export const getPosts = async (
       .collection("posts")
       .where("authorUid", "==", authorUid)
       .orderBy("createdAt", "desc")
-      .limit(10);
+      .limit(limit);
 
     if (!isBlogOwner) {
       postsQuery = postsQuery.where("isPublic", "==", true); // ✅ 블로그 주인이 아니면 공개된 글만
@@ -46,16 +40,23 @@ export const getPosts = async (
 
     const postSnapshot = await postsQuery.get();
 
-    return postSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      title: doc.data().title || "제목 없음",
-      content: doc.data().content || "내용 없음",
-      imageUrl: doc.data().imageUrl || null,
-      isPublic: doc.data().isPublic || false,
-      createdAt: doc.data().createdAt?.seconds
-        ? new Date(doc.data().createdAt.seconds * 1000).toISOString()
-        : null,
-    }));
+    return postSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title || "제목 없음",
+        content: data.content || "내용 없음",
+        imageUrl: data.imageUrl || null,
+        isPublic: data.isPublic || false,
+        authorUid: data.authorUid || "",
+        createdAt: data.createdAt
+          ? new Date(data.createdAt.seconds * 1000).toISOString()
+          : null,
+        updatedAt: data.updatedAt
+          ? new Date(data.updatedAt.seconds * 1000).toISOString()
+          : null,
+      };
+    });
   } catch (error) {
     console.error("❌ Error fetching posts:", error);
     return [];
