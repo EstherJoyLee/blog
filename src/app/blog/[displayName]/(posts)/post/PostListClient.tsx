@@ -29,7 +29,7 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
     initialPosts.length > 0 ? initialPosts[initialPosts.length - 1].id : null
   );
   const [hasMore, setHasMore] = useState(true); // ✅ 더 이상 불러올 게시물이 없으면 false로 설정
-
+  const [openPostIds, setOpenPostIds] = useState<string[]>([]);
   const [userUid, setUserUid] = useState<string | null>(null);
   const router = useRouter();
 
@@ -128,30 +128,49 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
       <h1 className="commonTitle">전체 게시물</h1>
 
       <div className="commonContent">
-        {posts.map((post) => (
-          <div key={post.id} className={styles.postListItem}>
-            <h2
-              onClick={() => handleView(post.id)}
-              style={{ cursor: "pointer" }}
-            >
-              {post.title}
-            </h2>
-            <div>
-              {post.imageUrl && (
-                <div style={{ position: "relative", margin: "32px 0 36px" }}>
-                  <Image
-                    alt={`${post.title} 이미지`}
-                    src={post.imageUrl || ""}
-                    width={200}
-                    height={200}
-                    style={{ objectFit: "cover" }}
-                  />
+        {posts.map((post) => {
+          const togglePost = (id: string) => {
+            setOpenPostIds((prev) =>
+              prev.includes(id)
+                ? prev.filter((pid) => pid !== id)
+                : [...prev, id]
+            );
+          };
+
+          return (
+            <div key={post.id} className={styles.postListItem}>
+              <h2 onClick={() => handleView(post.id)}>
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    togglePost(post.id);
+                  }}
+                >
+                  {openPostIds.includes(post.id) ? "▲" : "▼"}
+                </span>
+                {post.title}
+              </h2>
+              {openPostIds.includes(post.id) && (
+                <div>
+                  {post.imageUrl && (
+                    <div
+                      style={{ position: "relative", margin: "32px 0 36px" }}
+                    >
+                      <Image
+                        alt={`${post.title} 이미지`}
+                        src={post.imageUrl || ""}
+                        width={200}
+                        height={200}
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                  )}
+                  <MarkdownRenderer content={post.content} />
                 </div>
               )}
-              <MarkdownRenderer content={post.content} />
             </div>
-          </div>
-        ))}
+          );
+        })}
         {hasMore && (
           <div className={styles.seeMoreBtn}>
             <button

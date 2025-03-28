@@ -11,13 +11,24 @@
 
     h2 {
       max-width: 100%;
-      white-space: normal; /* 자동 줄바꿈 허용 */
+      white-space: normal;
       font-size: 24px;
       margin-bottom: 8px;
       font-weight: 700;
-      transition: 0.2s;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      flex-flow: row-reverse;
+      justify-content: space-between;
       &:hover {
         color: #b913b9;
+      }
+
+      span {
+        font-size: clamp(12px, 2vh, 30px);
+        margin-left: 20px;
+        font-family: system-ui;
       }
     }
     img {
