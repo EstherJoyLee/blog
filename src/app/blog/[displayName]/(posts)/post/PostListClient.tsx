@@ -8,6 +8,7 @@ import styles from "./PostListClient.module.scss";
 import Image from "next/image";
 import { IPostState } from "@/types";
 import dynamic from "next/dynamic";
+import Loader from "@/components/loader/Loader";
 
 interface PostListClientProps {
   initialPosts: IPostState[];
@@ -17,7 +18,7 @@ interface PostListClientProps {
 const MarkdownRenderer = dynamic(
   () => import("@/components/markdownRenderer/MarkdownRenderer"),
   {
-    loading: () => <p>로딩 중...</p>,
+    loading: () => <Loader />,
     ssr: false, // ✅ 클라이언트 전용 렌더링 (서버에서 제외)
   }
 );

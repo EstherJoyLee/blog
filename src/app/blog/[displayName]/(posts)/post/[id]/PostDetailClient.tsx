@@ -23,11 +23,12 @@ import { ClipLoader } from "react-spinners";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
 import dynamic from "next/dynamic";
+import Loader from "@/components/loader/Loader";
 
 const MarkdownRenderer = dynamic(
   () => import("@/components/markdownRenderer/MarkdownRenderer"),
   {
-    loading: () => <p>로딩 중...</p>,
+    loading: () => <Loader />,
     ssr: false, // ✅ 클라이언트 전용 렌더링 (서버에서 제외)
   }
 );
