@@ -203,6 +203,7 @@ const PostDetailClient = () => {
           onClick={() => router.push(`/blog/${blogUrl}/post`)}
           className={styles.commonBtn}
           aria-label="게시물 목록으로 돌아가기 버튼"
+          style={{ height: "40px" }}
         >
           목록으로 돌아가기
         </Button>
