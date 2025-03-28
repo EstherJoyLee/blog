@@ -1,29 +1,122 @@
-.table {
-  word-break: keep-all;
-  border: 1px solid #999;
-  border-radius: 8px;
-  thead {
-    tr {
-      border-bottom: 1px solid #999;
+.markdownWrapper {
+  line-height: 1.75;
+  margin: 40px 0;
+  p,
+  pre,
+  ul,
+  ol {
+    margin: 1rem 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 2rem 0;
+    font-weight: 900;
+  }
+
+  h1 {
+    font-size: clamp(28px, 2vh, 32px);
+    color: #1e40af;
+  }
+  h2 {
+    font-size: clamp(24px, 2vh, 28px);
+    color: #6b21a8;
+  }
+  h3 {
+    font-size: clamp(20px, 2vh, 24px);
+    color: #065f46;
+  }
+  h4 {
+    font-size: clamp(16px, 2vh, 20px);
+    color: #be185d;
+  }
+  h5 {
+    font-size: clamp(12px, 2vh, 16px);
+    color: #c2410c;
+  }
+  h6 {
+    font-size: clamp(8px, 2vh, 12px);
+    color: #475569;
+  }
+
+  code {
+    background: #ddd;
+    padding: 2px 4px;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  pre {
+    background: #c1bbbb;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+
+  table {
+    word-break: keep-all;
+    border: 1px solid #999;
+    border-radius: 8px;
+    thead {
+      tr {
+        border-bottom: 1px solid #999;
+      }
+      th:not(:last-of-type) {
+        border-right: 1px solid #fff;
+      }
+      th {
+        padding: 8px;
+        background: #999;
+        color: #fff;
+      }
     }
-    th:not(:last-of-type) {
-      border-right: 1px solid #fff;
-    }
-    th {
-      padding: 8px;
-      background: #999;
-      color: #fff;
+    tbody {
+      tr:not(:last-of-type) {
+        border-bottom: 1px solid #999;
+      }
+      td:not(:last-of-type) {
+        border-right: 1px solid #999;
+      }
+      td {
+        padding: 8px;
+      }
     }
   }
-  tbody {
-    tr:not(:last-of-type) {
-      border-bottom: 1px solid #999;
-    }
-    td:not(:last-of-type) {
-      border-right: 1px solid #999;
-    }
-    td {
-      padding: 8px;
-    }
+}
+
+.darkMarkdownWrapper {
+  h1 {
+    color: #93c5fd;
+  }
+  h2 {
+    color: #d8b4fe;
+  }
+  h3 {
+    color: #6ee7b7;
+  }
+  h4 {
+    color: #f9a8d4;
+  }
+  h5 {
+    color: #fdba74;
+  }
+  h6 {
+    color: #94a3b8;
+  }
+
+  code {
+    color: #333;
+  }
+
+  pre {
+    background: #2d2d2d;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
   }
 }
