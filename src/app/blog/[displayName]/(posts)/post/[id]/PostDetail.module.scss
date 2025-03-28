@@ -16,7 +16,7 @@
 
     h1 {
       padding-bottom: 12px;
-      word-break: break-all;
+      word-break: auto-phrase;
     }
 
     @include respond(xs) {
