@@ -1,19 +1,26 @@
 "use client";
 
-import { auth } from "@/firebase/config";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./PostListClient.module.scss";
 import Image from "next/image";
-import MarkdownRenderer from "@/components/markdownRenderer/MarkdownRenderer";
 import { IPostState } from "@/types";
+import dynamic from "next/dynamic";
 
 interface PostListClientProps {
   initialPosts: IPostState[];
   displayName: string;
 }
+
+const MarkdownRenderer = dynamic(
+  () => import("@/components/markdownRenderer/MarkdownRenderer"),
+  {
+    loading: () => <p>로딩 중...</p>,
+    ssr: false, // ✅ 클라이언트 전용 렌더링 (서버에서 제외)
+  }
+);
 
 const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
   const [posts, setPosts] = useState(initialPosts);
@@ -28,6 +35,7 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const { auth } = await import("@/firebase/config");
       const user = auth.currentUser;
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       if (user) {
@@ -61,6 +69,8 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
     console.log("🚀 fetchMorePosts 실행됨");
 
     try {
+      const { auth } = await import("@/firebase/config");
+
       const currentUser = auth.currentUser;
       const idToken = currentUser ? await currentUser.getIdToken() : null;
       const response = await fetch(
