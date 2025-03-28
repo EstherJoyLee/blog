@@ -37,7 +37,7 @@ const HomeClient = ({ initialPosts, displayName }: HomeClientProps) => {
       <h1 className="commonTitle">최신 게시물</h1>
       <div className={`commonContent ${styles.postContent}`}>
         {initialPosts.length > 0 ? (
-          initialPosts.map((post, index) => (
+          initialPosts.map((post) => (
             <div key={post.id} className={styles.postItem}>
               <div className={styles.postImage}>
                 <Image
@@ -45,7 +45,7 @@ const HomeClient = ({ initialPosts, displayName }: HomeClientProps) => {
                   src={post.imageUrl || "/images/default.jpeg"}
                   width={200}
                   height={200}
-                  priority={index === 0}
+                  // priority={index === 0}
                 />
               </div>
               <h2
