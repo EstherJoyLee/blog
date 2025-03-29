@@ -194,7 +194,6 @@ const PostDetailClient = () => {
                 src={post.imageUrl}
                 width={600}
                 height={400}
-                priority
               />
             )}
           </div>
