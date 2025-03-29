@@ -202,7 +202,9 @@ const PostDetailClient = () => {
           </div>
         )}
 
-        <MarkdownRenderer content={post.content} />
+        <Suspense fallback={<div className={styles.markdownSkeleton} />}>
+          <MarkdownRenderer content={post.content} />
+        </Suspense>
 
         <Button
           onClick={() => router.push(`/blog/${blogUrl}/post`)}
