@@ -7,7 +7,7 @@ import Footer from "@/layouts/footer/Footer";
 import Content from "@/components/content/Content";
 import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 import AuthProvider from "@/components/authProvider/AuthProvider";
-import Head from "next/head";
+import ClientProgress from "@/components/clientProgress/ClientProgress";
 
 export const metadata: Metadata = {
   title: "JoyLog - Dev & Life Blog",
@@ -53,29 +53,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <Head>
-        {/* DNS Prefetch */}
-        <link rel="dns-prefetch" href="//googleapis.com" />
-        <link rel="dns-prefetch" href="//identitytoolkit.googleapis.com" />
-        <link rel="dns-prefetch" href="//firestore.googleapis.com" />
-
-        {/* Preconnect */}
-        <link rel="preconnect" href="https://googleapis.com" crossOrigin="" />
-        <link
-          rel="preconnect"
-          href="https://identitytoolkit.googleapis.com"
-          crossOrigin=""
-        />
-        <link
-          rel="preconnect"
-          href="https://firestore.googleapis.com"
-          crossOrigin=""
-        />
-      </Head>
-
       <body
         className={`bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
       >
+        <ClientProgress />
         <div id="wrap">
           <Providers>
             <AuthProvider />

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@mui/material";
 import { useIsOwner } from "../checkIsOwner/CheckIsOwner";
 import styles from "./OwnerActionButtons.module.scss";
