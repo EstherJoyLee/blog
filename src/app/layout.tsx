@@ -53,6 +53,29 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link
+          rel="dns-prefetch"
+          href="https://identitytoolkit.googleapis.com"
+        />
+        <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin=""
+        />
+        <link
+          rel="preconnect"
+          href="https://identitytoolkit.googleapis.com"
+          crossOrigin=""
+        />
+        <link
+          rel="preconnect"
+          href="https://firestore.googleapis.com"
+          crossOrigin=""
+        />
+      </head>
       <body
         className={`bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
       >
