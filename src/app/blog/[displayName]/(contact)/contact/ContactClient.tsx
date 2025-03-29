@@ -10,7 +10,6 @@ import { db } from "@/firebase/config";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
 
 const ContactForm = () => {
-  // const [isLoading, setIsLoading] = useState(false);
   const [blogOwnerEmail, setBlogOwnerEmail] = useState("");
   const blogUrl = useGetBlogNameFromUrl();
   const [formData, setFormData] = useState({
@@ -49,18 +48,14 @@ const ContactForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    // console.log("변경된 필드:", e.target.name, "새 값:", e.target.value);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // setIsLoading(true);
-    // console.log("blogOwnerEmail: ", blogOwnerEmail);
 
     if (!blogOwnerEmail) {
       alert("블로그 주인의 이메일을 찾을 수 없습니다.");
-      // setIsLoading(false);
       return;
     }
 
@@ -68,8 +63,6 @@ const ContactForm = () => {
       to_name: blogUrl,
       ...formData,
     };
-
-    // alert(JSON.stringify(process.env));
 
     emailjs
       .send(
@@ -87,12 +80,10 @@ const ContactForm = () => {
             email: "",
             message: "",
           });
-          // setIsLoading(false);
         },
         (error) => {
           console.log("FAILED...", error);
           alert("이메일 전송에 실패했습니다.");
-          // setIsLoading(false);
         }
       );
   };

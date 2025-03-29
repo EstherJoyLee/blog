@@ -44,7 +44,6 @@ const HomePage = async ({
       const data = await response.json();
       if (data.uid) {
         userUid = data.uid;
-        // console.log("✅ 서버에서 검증된 userUid:", userUid);
       }
     } catch (error) {
       console.error("❌ 사용자 인증 오류:", error);
@@ -52,8 +51,6 @@ const HomePage = async ({
   } else {
     console.warn("⚠️ `idToken`이 쿠키에서 존재하지 않음.");
   }
-
-  // console.log("🔍 최종 userUid: ", userUid);
 
   const posts = await getPosts(10, resolvedParams.displayName, userUid);
 
