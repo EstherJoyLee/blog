@@ -19,7 +19,6 @@ import css from "refractor/lang/css";
 import markup from "refractor/lang/markup";
 import shell from "refractor/lang/shell-session";
 import perl from "refractor/lang/perl";
-import { rehypeFallbackLanguage } from "@/lib/rehype-fallback-language";
 import styles from "./MarkdownRenderer.module.scss";
 
 // ✅ 필요한 언어 등록
@@ -56,11 +55,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[
-          rehypeRaw,
-          rehypeFallbackLanguage,
-          [rehypePrism, { refractor }],
-        ]}
+        rehypePlugins={[rehypeRaw, [rehypePrism, { refractor }]]}
       >
         {content}
       </ReactMarkdown>

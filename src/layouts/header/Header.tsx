@@ -105,7 +105,10 @@ const Header = () => {
             </Link>
           ) : (
             <Link href={`/blog/${userBlogUrl}`} scroll={false}>
-              <div className={styles.profileImage}>
+              <div
+                className={styles.profileImage}
+                style={{ width: "32px", height: "32px" }}
+              >
                 <Image
                   alt="프로필 이미지"
                   src={userPhotoURL || "/images/og_Image.gif"}

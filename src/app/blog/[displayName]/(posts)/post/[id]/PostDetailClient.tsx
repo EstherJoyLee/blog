@@ -1,6 +1,5 @@
 "use client";
 
-import { useIsOwner } from "@/components/checkIsOwner/CheckIsOwner";
 import { db } from "@/firebase/config";
 import { IPostState } from "@/types";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
@@ -17,13 +16,20 @@ import {
 } from "firebase/firestore";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, Suspense } from "react";
 import styles from "./PostDetail.module.scss";
 import { ClipLoader } from "react-spinners";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
 import dynamic from "next/dynamic";
 import Loader from "@/components/loader/Loader";
+
+const OwnerActionButtons = dynamic(
+  () => import("@/components/ownerActionButtons/OwnerActionButtons"),
+  {
+    ssr: false,
+  }
+);
 
 const MarkdownRenderer = dynamic(
   () => import("@/components/markdownRenderer/MarkdownRenderer"),
@@ -40,8 +46,63 @@ const PostDetailClient = () => {
   const router = useRouter();
   const blogUrl = useGetBlogNameFromUrl(); // 현재 블로그 URL
   const { id } = params;
-  const { isOwner } = useIsOwner();
   const [isPublic, setIsPublic] = useState(true);
+
+  const fetchPostDetail = useCallback(async () => {
+    try {
+      if (!id || typeof id !== "string") return;
+      const postRef = doc(db, "posts", id);
+      const postSnap = await getDoc(postRef);
+
+      if (!postSnap.exists()) {
+        console.log("게시물을 찾을 수 없습니다.");
+        router.push("/error"); // 게시물이 없으면 에러 페이지로 리디렉션
+        return;
+      }
+
+      const postData = postSnap.data();
+      const authorUid = postData?.authorUid;
+
+      setIsPublic(postData.isPublic);
+
+      // 작성자 정보 가져오기
+      const userCollection = collection(db, "users");
+      const authorQuery = query(userCollection, where("uid", "==", authorUid));
+      const authorSnapshot = await getDocs(authorQuery);
+
+      const authorData = authorSnapshot.docs[0].data();
+      const authorBlogUrl = authorData.blogUrl; // 작성자의 블로그 URL
+      // console.log("authorBlogUrl: ", authorBlogUrl);
+      // console.log("blogUrl: ", blogUrl);
+      // console.log("authorBlogUrl === blogUrl", authorBlogUrl === blogUrl);
+
+      // 블로그 URL 비교
+      if (blogUrl && authorBlogUrl !== blogUrl) {
+        console.log("이 게시물은 현재 블로그에 속하지 않습니다.");
+        router.push("/error"); // 블로그 URL이 다르면 에러 페이지로 리디렉션
+        return;
+      }
+
+      // 게시물 정보 세팅
+      setPost({
+        id: postSnap.id,
+        title: postData.title || "제목 없음",
+        content: postData.content || "내용 없음",
+        imageUrl: postData.imageUrl || null,
+        isPublic: postData.isPublic || false,
+        authorUid: postData.authorUid || "",
+        createdAt:
+          postData.createdAt instanceof Timestamp
+            ? postData.createdAt
+            : Timestamp.fromDate(new Date()),
+      });
+    } catch (error) {
+      console.error("게시물 가져오기 오류: ", error);
+      router.push("/error"); // 오류 발생 시 에러 페이지로 리디렉션
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, blogUrl, router]);
 
   useEffect(() => {
     if (!blogUrl) return;
@@ -49,64 +110,6 @@ const PostDetailClient = () => {
       setIsLoading(false);
       return;
     }
-
-    const fetchPostDetail = async () => {
-      try {
-        const postRef = doc(db, "posts", id);
-        const postSnap = await getDoc(postRef);
-
-        if (!postSnap.exists()) {
-          console.log("게시물을 찾을 수 없습니다.");
-          router.push("/error"); // 게시물이 없으면 에러 페이지로 리디렉션
-          return;
-        }
-
-        const postData = postSnap.data();
-        const authorUid = postData?.authorUid;
-
-        setIsPublic(postData.isPublic);
-
-        // 작성자 정보 가져오기
-        const userCollection = collection(db, "users");
-        const authorQuery = query(
-          userCollection,
-          where("uid", "==", authorUid)
-        );
-        const authorSnapshot = await getDocs(authorQuery);
-
-        const authorData = authorSnapshot.docs[0].data();
-        const authorBlogUrl = authorData.blogUrl; // 작성자의 블로그 URL
-        // console.log("authorBlogUrl: ", authorBlogUrl);
-        // console.log("blogUrl: ", blogUrl);
-        // console.log("authorBlogUrl === blogUrl", authorBlogUrl === blogUrl);
-
-        // 블로그 URL 비교
-        if (blogUrl && authorBlogUrl !== blogUrl) {
-          console.log("이 게시물은 현재 블로그에 속하지 않습니다.");
-          router.push("/error"); // 블로그 URL이 다르면 에러 페이지로 리디렉션
-          return;
-        }
-
-        // 게시물 정보 세팅
-        setPost({
-          id: postSnap.id,
-          title: postData.title || "제목 없음",
-          content: postData.content || "내용 없음",
-          imageUrl: postData.imageUrl || null,
-          isPublic: postData.isPublic || false,
-          authorUid: postData.authorUid || "",
-          createdAt:
-            postData.createdAt instanceof Timestamp
-              ? postData.createdAt
-              : Timestamp.fromDate(new Date()),
-        });
-      } catch (error) {
-        console.error("게시물 가져오기 오류: ", error);
-        router.push("/error"); // 오류 발생 시 에러 페이지로 리디렉션
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
     fetchPostDetail();
   }, [id, blogUrl, router]);
@@ -165,27 +168,29 @@ const PostDetailClient = () => {
           )}
         </h1>
       </div>
-      {isOwner && (
-        <div className={styles.btnGroup}>
-          <Button
-            variant="contained"
-            onClick={() => router.push(`/blog/${blogUrl}/edit/${id}`)}
-            className={styles.editBtn}
-            aria-label="게시물 수정하기 버튼"
-          >
-            수정
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={onDeletePost}
-            className={styles.deleteBtn}
-            aria-label="게시물 삭제하기 버튼"
-          >
-            삭제
-          </Button>
-        </div>
-      )}
+      <Suspense fallback={<div style={{ minHeight: "48px" }} />}>
+        <OwnerActionButtons
+          actions={[
+            {
+              label: "수정",
+              onClick: () => router.push(`/blog/${blogUrl}/edit/${id}`),
+            },
+            {
+              label: "삭제",
+              color: "error",
+              onClick: onDeletePost,
+            },
+            {
+              label: "복사",
+              variant: "outlined",
+              onClick: () => {
+                navigator.clipboard.writeText(post?.content || "");
+                alert("게시물 내용이 복사되었습니다.");
+              },
+            },
+          ]}
+        />
+      </Suspense>
       <div className="commonContent">
         {post.imageUrl && (
           <div style={{ position: "relative", margin: "32px 0 36px" }}>
@@ -203,7 +208,6 @@ const PostDetailClient = () => {
           onClick={() => router.push(`/blog/${blogUrl}/post`)}
           className={styles.commonBtn}
           aria-label="게시물 목록으로 돌아가기 버튼"
-          style={{ height: "40px" }}
         >
           목록으로 돌아가기
         </Button>
