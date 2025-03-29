@@ -174,19 +174,13 @@ const PostDetailClient = () => {
             {
               label: "수정",
               onClick: () => router.push(`/blog/${blogUrl}/edit/${id}`),
+              ariaLabel: "게시물 수정하기 버튼",
             },
             {
               label: "삭제",
               color: "error",
               onClick: onDeletePost,
-            },
-            {
-              label: "복사",
-              variant: "outlined",
-              onClick: () => {
-                navigator.clipboard.writeText(post?.content || "");
-                alert("게시물 내용이 복사되었습니다.");
-              },
+              ariaLabel: "게시물 삭제하기 버튼",
             },
           ]}
         />
