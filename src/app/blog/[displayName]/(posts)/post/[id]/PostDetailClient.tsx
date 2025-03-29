@@ -35,7 +35,7 @@ const MarkdownRenderer = dynamic(
   () => import("@/components/markdownRenderer/MarkdownRenderer"),
   {
     loading: () => <Loader />,
-    ssr: false, // ✅ 클라이언트 전용 렌더링 (서버에서 제외)
+    ssr: true,
   }
 );
 
