@@ -22,7 +22,6 @@ import { ClipLoader } from "react-spinners";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
 import dynamic from "next/dynamic";
-import Loader from "@/components/loader/Loader";
 
 const OwnerActionButtons = dynamic(
   () => import("@/components/ownerActionButtons/OwnerActionButtons"),
@@ -34,7 +33,9 @@ const OwnerActionButtons = dynamic(
 const MarkdownRenderer = dynamic(
   () => import("@/components/markdownRenderer/MarkdownRenderer"),
   {
-    loading: () => <Loader />,
+    loading: () => (
+      <div style={{ minHeight: "600px", padding: "24px 0" }}>Loading...</div>
+    ),
     ssr: true,
   }
 );
