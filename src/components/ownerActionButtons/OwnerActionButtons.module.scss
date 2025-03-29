@@ -1,3 +1,20 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
 .btnGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: 20px;
   min-height: 40px;
+
+  @include respond(xs) {
+    margin: 20px auto;
+    width: 100%;
+
+    button {
+      flex: 1;
+    }
+  }
 }
