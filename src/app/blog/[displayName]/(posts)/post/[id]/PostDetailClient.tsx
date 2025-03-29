@@ -186,16 +186,22 @@ const PostDetailClient = () => {
         />
       </Suspense>
       <div className="commonContent">
-        {post.imageUrl && (
+        {isLoading ? (
+          <div className={styles.imageSkeleton} />
+        ) : (
           <div style={{ position: "relative", margin: "32px 0 36px" }}>
-            <Image
-              alt={`${post.title} 이미지`}
-              src={post.imageUrl}
-              width={600}
-              height={400}
-            />
+            {post.imageUrl && (
+              <Image
+                alt={`${post.title} 이미지`}
+                src={post.imageUrl}
+                width={600}
+                height={400}
+                priority
+              />
+            )}
           </div>
         )}
+
         <MarkdownRenderer content={post.content} />
 
         <Button
