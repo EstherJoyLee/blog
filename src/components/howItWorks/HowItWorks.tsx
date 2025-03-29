@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./HowItWorks.module.scss";
 import { FaUser, FaPenFancy, FaRocket, FaShare } from "react-icons/fa";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   {
@@ -34,26 +29,6 @@ const steps = [
 ];
 
 const HowItWorks = () => {
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    gsap.fromTo(
-      sectionRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          end: "bottom 50%",
-          toggleActions: "restart pause resume pause",
-        },
-      }
-    );
-  }, []);
-
   const { theme, mounted } = useMountedTheme();
 
   if (!mounted) {

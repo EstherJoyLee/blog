@@ -1,9 +1,8 @@
 import { useRef } from "react";
-import gsap from "gsap";
-import { ElementType } from "react"; // ✅ 추가
+import { ElementType } from "react";
 
 export type MagneticElement = {
-  tag: ElementType; // ✅ JSX에서 사용할 수 있도록 React.ElementType 지정
+  tag: ElementType;
   text?: string;
   className?: string;
 };
@@ -17,19 +16,26 @@ export const useMagneticEffect = <T extends HTMLElement>(
     elementRefs.current[index] = el;
   };
 
-  const handleMouseMove = (index: number) => (e: React.MouseEvent) => {
+  const handleMouseMove = (index: number) => async (e: React.MouseEvent) => {
     const el = elementRefs.current[index];
     if (!el) return;
 
     const { left, top, width, height } = el.getBoundingClientRect();
     const x = (e.clientX - (left + width / 2)) * 0.3;
     const y = (e.clientY - (top + height / 2)) * 0.3;
+
+    const gsapModule = await import("gsap");
+    const gsap = gsapModule.default;
     gsap.to(el, { x, y, duration: 0.3, ease: "power2.out" });
   };
 
-  const handleMouseLeave = (index: number) => () => {
+  const handleMouseLeave = (index: number) => async () => {
     const el = elementRefs.current[index];
-    if (el) gsap.to(el, { x: 0, y: 0, duration: 0.3 });
+    if (!el) return;
+
+    const gsapModule = await import("gsap");
+    const gsap = gsapModule.default;
+    gsap.to(el, { x: 0, y: 0, duration: 0.3 });
   };
 
   return { setRef, handleMouseMove, handleMouseLeave, elements };

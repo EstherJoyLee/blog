@@ -28,7 +28,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/components/scrollCards",
     "next.config.js"
   ],
   "exclude": ["node_modules"]
