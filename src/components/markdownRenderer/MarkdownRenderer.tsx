@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypePrism from "rehype-prism-plus";
 import remarkGfm from "remark-gfm";
+import { rehypeFallbackLanguage } from "@/utils/rehype-fallback-language";
 
 // ✅ Refractor에서 언어 등록
 import { refractor } from "refractor/lib/core";
@@ -55,7 +56,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw, [rehypePrism, { refractor }]]}
+        rehypePlugins={[
+          rehypeRaw,
+          rehypeFallbackLanguage,
+          [rehypePrism, { refractor }],
+        ]}
       >
         {content}
       </ReactMarkdown>
