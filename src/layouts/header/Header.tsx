@@ -1,103 +1,104 @@
 "use client";
-import { auth, db } from "@/firebase/config";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import styles from "./Header.module.scss";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+
+import styles from "./Header.module.scss";
+import { auth, db } from "@/firebase/config";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
+import { setThemeClass } from "@/utils/setThemeClass";
+import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
+import { generateBlogUrl } from "@/utils/blogUrlService";
 import {
   LOGIN,
   LOGOUT,
   selectIsLoggedIn,
   selectUserPhotoURL,
 } from "@/redux/slice/authSlice";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
-import { generateBlogUrl } from "@/utils/blogUrlService";
-import { doc, getDoc } from "firebase/firestore";
-import { useMountedTheme } from "@/hooks/useMountedTheme";
-import { setThemeClass } from "@/utils/setThemeClass";
-import { usePathname } from "next/navigation";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const [displayName, setDisplayName] = useState("");
+  const pathname = usePathname();
+  const blogUrl = useGetBlogNameFromUrl();
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const userPhotoURL = useSelector(selectUserPhotoURL);
+
   const [userBlogUrl, setUserBlogUrl] = useState("");
-  const blogUrl = useGetBlogNameFromUrl();
   const [menuOpen, setMenuOpen] = useState(false);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          setUserBlogUrl(userData.blogUrl);
-        }
-
-        if (user.displayName === null) {
-          const u1 = generateBlogUrl(user.email!) ?? "Unknown";
-          const uName = u1.charAt(0).toUpperCase() + u1.slice(1);
-
-          setDisplayName(uName);
-        } else {
-          setDisplayName(user.displayName);
-        }
-
-        //  유저 정보를 리덕스 스토어에 저장하기
-        dispatch(
-          LOGIN({
-            email: user.email,
-            userName: user.displayName ? user.displayName : displayName,
-            userID: user.uid,
-            userPhotoURL: user.photoURL,
-          })
-        );
-      } else {
-        setUserBlogUrl("");
-        setDisplayName("");
-        // 유저 정보를 리덕스 스토어에서 지우기
-        dispatch(LOGOUT());
-      }
-    });
-  }, [dispatch, displayName]);
-
-  const logoutUser = () => {
-    signOut(auth)
-      .then(() => {
-        alert("로그아웃 되었습니다.");
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  };
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  useEffect(() => {
-    // 페이지 변경될 때 상태 초기화
-    setMenuOpen(false);
-    // console.log("pathname: ", pathname);
-  }, [pathname]);
   const { theme, mounted } = useMountedTheme();
 
-  if (!mounted) {
-    return null; // ✅ 마운트되기 전에는 아무것도 렌더링하지 않음 (Hydration mismatch 방지)
-  }
+  // ✅ Auth 상태 구독 (지연 처리 + 상태 최소화)
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        dispatch(LOGOUT());
+        setUserBlogUrl("");
+        return;
+      }
+
+      // 🔁 Firebase 비동기 연산은 microtask로 넘기기
+      setTimeout(async () => {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserBlogUrl(data.blogUrl);
+          }
+
+          const fallbackName = generateBlogUrl(user.email!) ?? "Unknown";
+          const userName =
+            user.displayName ||
+            fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1);
+
+          dispatch(
+            LOGIN({
+              email: user.email,
+              userName,
+              userID: user.uid,
+              userPhotoURL: user.photoURL,
+            })
+          );
+        } catch (error) {
+          console.error("🔥 Header Firestore Error:", error);
+        }
+      }, 0);
+    });
+
+    return () => unsub();
+  }, [dispatch]);
+
+  // ✅ displayName 캐싱
+  const displayName = useMemo(() => {
+    const user = auth.currentUser;
+    if (!user) return "";
+
+    if (user.displayName) return user.displayName;
+
+    const fallback = generateBlogUrl(user.email!) ?? "Unknown";
+    return fallback.charAt(0).toUpperCase() + fallback.slice(1);
+  }, [auth.currentUser]);
+
+  // ✅ CSS 클래스 캐싱
+  const headerClass = useMemo(() => {
+    return setThemeClass(theme, styles.darkHeader, styles.header);
+  }, [theme]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  if (!mounted) return null;
 
   return (
     <>
-      <header
-        className={`${setThemeClass(theme, styles.darkHeader, styles.header)}`}
-      >
+      <header className={headerClass}>
         <div className={styles.logo}>
           {!isLoggedIn ? (
             <Link href={"/"}>
@@ -117,12 +118,12 @@ const Header = () => {
                   priority
                 />
               </div>
-
               <h1>{displayName}&#39;s JoyLog</h1>
             </Link>
           )}
         </div>
-        {blogUrl ? (
+
+        {blogUrl && (
           <nav className={`${styles.nav} ${menuOpen ? styles.active : ""}`}>
             <ul>
               <li>
@@ -142,8 +143,6 @@ const Header = () => {
               </li>
             </ul>
           </nav>
-        ) : (
-          ""
         )}
 
         <div className={styles.loginBar}>
@@ -151,31 +150,25 @@ const Header = () => {
             {!isLoggedIn ? (
               <>
                 <li className={styles.item}>
-                  <Link href={"/login"}>로그인</Link>
+                  <Link href="/login">로그인</Link>
                 </li>
                 <li className={styles.item}>
                   <Link href="/signup">회원가입</Link>
                 </li>
               </>
             ) : (
-              <>
-                <li className={styles.item}>
-                  <Link
-                    href={"/"}
-                    onClick={() => {
-                      logoutUser();
-                    }}
-                  >
-                    로그아웃
-                  </Link>
-                </li>
-              </>
+              <li className={styles.item}>
+                <Link href="/" onClick={logoutUser}>
+                  로그아웃
+                </Link>
+              </li>
             )}
           </ul>
+
           <div
             id="hamburger"
             className={`${styles.hamburger} ${menuOpen ? styles.active : ""}`}
-            onClick={toggleMenu}
+            onClick={() => setMenuOpen(!menuOpen)}
           >
             <span></span>
             <span></span>
@@ -183,12 +176,19 @@ const Header = () => {
           </div>
         </div>
       </header>
+
       <div
         id={styles.deemedWrapper}
         className={`${menuOpen ? styles.active : ""}`}
-      ></div>
+      />
     </>
   );
+};
+
+const logoutUser = () => {
+  signOut(auth)
+    .then(() => alert("로그아웃 되었습니다."))
+    .catch((error) => console.log(error.message));
 };
 
 export default Header;
