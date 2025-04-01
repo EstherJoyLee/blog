@@ -40,9 +40,6 @@ const authSlice = createSlice({
 export const { LOGIN, LOGOUT } = authSlice.actions;
 
 export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
-export const selectEmail = (state: RootState) => state.auth.email;
-export const selectUserName = (state: RootState) => state.auth.userName;
-export const selectUserID = (state: RootState) => state.auth.userID;
 export const selectUserPhotoURL = (state: RootState) => state.auth.userPhotoURL;
 
 export default authSlice.reducer;

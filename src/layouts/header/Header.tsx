@@ -113,6 +113,9 @@ const Header = () => {
                   alt="프로필 이미지"
                   src={userPhotoURL || "/images/og_Image.gif"}
                   layout="fill"
+                  width={32}
+                  height={32}
+                  priority
                 />
               </div>
 
