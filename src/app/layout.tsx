@@ -3,7 +3,6 @@ import "@/styles/globals.css";
 import Header from "@/layouts/header/Header";
 import Providers from "@/redux/Providers";
 import Footer from "@/layouts/footer/Footer";
-// import { spaceGrotesk, roboto, notoSansKR } from "@/styles/font";
 import Content from "@/components/content/Content";
 import ThemeToggle from "@/components/themeToggleBtn/ThemeToggleBtn";
 import AuthProvider from "@/components/authProvider/AuthProvider";
