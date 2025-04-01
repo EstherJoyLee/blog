@@ -15,7 +15,7 @@ import {
   where,
 } from "firebase/firestore";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import styles from "./PostDetail.module.scss";
 import { ClipLoader } from "react-spinners";
@@ -55,8 +55,8 @@ const PostDetailClient = () => {
       const postSnap = await getDoc(postRef);
 
       if (!postSnap.exists()) {
-        console.log("게시물을 찾을 수 없습니다.");
-        router.push("/error"); // 게시물이 없으면 에러 페이지로 리디렉션
+        // console.log("게시물을 찾을 수 없습니다.");
+        // notFound(); // 게시물이 없으면 에러 페이지로 리디렉션
         return;
       }
 
@@ -76,7 +76,7 @@ const PostDetailClient = () => {
       // 블로그 URL 비교
       if (blogUrl && authorBlogUrl !== blogUrl) {
         console.log("이 게시물은 현재 블로그에 속하지 않습니다.");
-        router.push("/error"); // 블로그 URL이 다르면 에러 페이지로 리디렉션
+        notFound(); // 블로그 URL이 다르면 에러 페이지로 리디렉션
         return;
       }
 
@@ -95,7 +95,7 @@ const PostDetailClient = () => {
       });
     } catch (error) {
       console.error("게시물 가져오기 오류: ", error);
-      router.push("/error"); // 오류 발생 시 에러 페이지로 리디렉션
+      notFound(); // 오류 발생 시 에러 페이지로 리디렉션
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +143,7 @@ const PostDetailClient = () => {
       />
     );
 
-  if (!post) return <div>게시물을 찾을 수 없습니다.</div>;
+  if (!post) return notFound();
 
   return (
     <div
