@@ -158,3 +158,10 @@
   height: 100%;
   cursor: pointer;
 }
+.markdownSkeleton {
+  min-height: 600px;
+  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 8px;
+}

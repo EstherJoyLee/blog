@@ -1,40 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypePrism from "rehype-prism-plus";
 import remarkGfm from "remark-gfm";
-import { rehypeFallbackLanguage } from "@/utils/rehype-fallback-language";
+import { rehypeFallbackLanguage } from "@/utils/rehypeFallbackLanguage";
 import { refractor } from "refractor/lib/core";
-import ts from "refractor/lang/typescript";
-import js from "refractor/lang/javascript";
-import json from "refractor/lang/json";
 import bash from "refractor/lang/bash";
-import jsx from "refractor/lang/jsx";
-import tsx from "refractor/lang/tsx";
-import markdown from "refractor/lang/markdown";
 import css from "refractor/lang/css";
-import markup from "refractor/lang/markup";
-import shell from "refractor/lang/shell-session";
-import perl from "refractor/lang/perl";
+import js from "refractor/lang/javascript";
+import jsx from "refractor/lang/jsx";
+import json from "refractor/lang/json";
+import markdown from "refractor/lang/markdown";
 import styles from "./MarkdownRenderer.module.scss";
 import "prismjs/themes/prism-tomorrow.css";
 import { setThemeClass } from "@/utils/setThemeClass";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 
 // ✅ 언어 등록
-refractor.register(ts);
-refractor.register(js);
-refractor.register(json);
 refractor.register(bash);
-refractor.register(jsx);
-refractor.register(tsx);
-refractor.register(markdown);
 refractor.register(css);
-refractor.register(markup);
-refractor.register(shell);
-refractor.register(perl);
+refractor.register(js);
+refractor.register(jsx);
+refractor.register(json);
+refractor.register(markdown);
 
 interface MarkdownRendererProps {
   content: string | undefined;
@@ -42,7 +32,14 @@ interface MarkdownRendererProps {
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const { theme } = useMountedTheme();
+  const [mounted, setMounted] = useState(false);
   const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className={styles.markdownSkeleton}></div>;
 
   if (!content) return null;
 

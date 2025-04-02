@@ -35,7 +35,7 @@ const MarkdownRenderer = dynamic(
   () => import("@/components/markdownRenderer/MarkdownRenderer"),
   {
     loading: () => <Loader />,
-    ssr: true,
+    ssr: false,
   }
 );
 
@@ -193,7 +193,6 @@ const PostDetailClient = () => {
                 src={post.imageUrl}
                 width={600}
                 height={400}
-                priority
               />
             )}
           </div>

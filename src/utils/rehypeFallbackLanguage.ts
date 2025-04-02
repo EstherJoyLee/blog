@@ -4,17 +4,10 @@ import type { Root, Element } from "hast";
 const supportedLanguages = new Set([
   "bash",
   "css",
-  "javascript",
   "js",
-  "json",
   "jsx",
+  "json",
   "markdown",
-  "markup",
-  "shell-session",
-  "tsx",
-  "ts",
-  "typescript",
-  "perl",
 ]);
 
 export function rehypeFallbackLanguage() {
