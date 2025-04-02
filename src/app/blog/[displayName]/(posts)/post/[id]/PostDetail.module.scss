@@ -83,3 +83,11 @@
     border-color: $primary;
   }
 }
+
+.titleSkeleton {
+  width: 80%;
+  height: 2.5rem;
+  background-color: #eee;
+  border-radius: 4px;
+  animation: pulse 1.2s infinite;
+}

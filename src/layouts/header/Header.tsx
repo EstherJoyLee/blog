@@ -100,27 +100,25 @@ const Header = () => {
     <>
       <header className={headerClass}>
         <div className={styles.logo}>
-          {!isLoggedIn ? (
-            <Link href={"/"}>
+          <Link href={`/blog/${userBlogUrl}`} scroll={false}>
+            <div
+              className={styles.profileImage}
+              style={{ width: "32px", height: "32px" }}
+            >
+              <Image
+                alt="프로필 이미지"
+                src={userPhotoURL || "/images/og_Image.gif"}
+                width={32}
+                height={32}
+                priority
+              />
+            </div>
+            {!isLoggedIn ? (
               <h1>JoyLog</h1>
-            </Link>
-          ) : (
-            <Link href={`/blog/${userBlogUrl}`} scroll={false}>
-              <div
-                className={styles.profileImage}
-                style={{ width: "32px", height: "32px" }}
-              >
-                <Image
-                  alt="프로필 이미지"
-                  src={userPhotoURL || "/images/og_Image.gif"}
-                  width={32}
-                  height={32}
-                  priority
-                />
-              </div>
+            ) : (
               <h1>{displayName}&#39;s JoyLog</h1>
-            </Link>
-          )}
+            )}
+          </Link>
         </div>
 
         {blogUrl && (
