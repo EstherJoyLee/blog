@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import emailjs from "@emailjs/browser";
 import FormLayout from "@/components/FormLayout/FormLayout";
 import Input from "@/components/FormLayout/Input/Input";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";

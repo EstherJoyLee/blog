@@ -3,7 +3,7 @@
 import { db } from "@/firebase/config";
 import { IPostState } from "@/types";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import {
   collection,
   deleteDoc,

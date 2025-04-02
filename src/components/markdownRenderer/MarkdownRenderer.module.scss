@@ -120,3 +120,41 @@
     overflow-x: auto;
   }
 }
+// .markdownWrapper {
+//   font-size: 1rem;
+//   line-height: 1.7;
+//   word-break: break-word;
+// }
+
+// .darkMarkdownWrapper {
+//   @extend .markdownWrapper;
+//   background-color: #111;
+//   color: #ddd;
+// }
+
+.contentBox {
+  transition: max-height 0.3s ease;
+  overflow: hidden;
+}
+
+.collapsed {
+  max-height: 400px;
+  mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+}
+
+.toggleBox {
+  display: block;
+  padding: 12px;
+  background: #ffffff1a;
+  border-radius: 4px;
+  text-align: center;
+  transition: all 0.2s;
+  opacity: 1;
+}
+
+.toggleBtn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}

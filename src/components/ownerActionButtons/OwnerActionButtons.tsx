@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import { useIsOwner } from "../checkIsOwner/CheckIsOwner";
 import styles from "./OwnerActionButtons.module.scss";
 

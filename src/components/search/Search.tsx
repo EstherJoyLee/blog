@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 import styles from "./Search.module.scss";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import { setThemeClass } from "@/utils/setThemeClass";

@@ -1,13 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypePrism from "rehype-prism-plus";
 import remarkGfm from "remark-gfm";
 import { rehypeFallbackLanguage } from "@/utils/rehype-fallback-language";
-
-// ✅ Refractor에서 언어 등록
 import { refractor } from "refractor/lib/core";
 import ts from "refractor/lang/typescript";
 import js from "refractor/lang/javascript";
@@ -21,8 +19,11 @@ import markup from "refractor/lang/markup";
 import shell from "refractor/lang/shell-session";
 import perl from "refractor/lang/perl";
 import styles from "./MarkdownRenderer.module.scss";
+import "prismjs/themes/prism-tomorrow.css";
+import { setThemeClass } from "@/utils/setThemeClass";
+import { useMountedTheme } from "@/hooks/useMountedTheme";
 
-// ✅ 필요한 언어 등록
+// ✅ 언어 등록
 refractor.register(ts);
 refractor.register(js);
 refractor.register(json);
@@ -35,17 +36,18 @@ refractor.register(markup);
 refractor.register(shell);
 refractor.register(perl);
 
-// ✅ 테마 CSS
-import "prismjs/themes/prism-tomorrow.css";
-import { setThemeClass } from "@/utils/setThemeClass";
-import { useMountedTheme } from "@/hooks/useMountedTheme";
-
 interface MarkdownRendererProps {
   content: string | undefined;
 }
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const { theme } = useMountedTheme();
+  const [expanded, setExpanded] = useState(false);
+
+  if (!content) return null;
+
+  const isLong = content.length > 50;
+
   return (
     <div
       className={setThemeClass(
@@ -54,16 +56,33 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
         styles.markdownWrapper
       )}
     >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[
-          rehypeRaw,
-          rehypeFallbackLanguage,
-          [rehypePrism, { refractor }],
-        ]}
+      <div
+        className={`${styles.contentBox} ${
+          isLong && !expanded ? styles.collapsed : ""
+        }`}
       >
-        {content}
-      </ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[
+            rehypeRaw,
+            rehypeFallbackLanguage,
+            [rehypePrism, { refractor }],
+          ]}
+        >
+          {content}
+        </ReactMarkdown>
+      </div>
+
+      {isLong && (
+        <div className={styles.toggleBox}>
+          <button
+            className={styles.toggleBtn}
+            onClick={() => setExpanded((prev) => !prev)}
+          >
+            {expanded ? "접기 ▲" : "전체 보기 ▼"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

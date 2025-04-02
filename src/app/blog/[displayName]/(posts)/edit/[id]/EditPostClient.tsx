@@ -6,7 +6,7 @@ import { setPublicUrl } from "@/redux/slice/imageSlice";
 import { supabase } from "@/supabase/config";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
 import uploadImage from "@/utils/uploadImage";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
