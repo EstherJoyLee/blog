@@ -200,7 +200,7 @@ const PostDetailClient = () => {
         )}
 
         <Suspense fallback={<div className={styles.markdownSkeleton} />}>
-          <MarkdownRenderer content={post.content} />
+          <MarkdownRenderer content={post.content || ""} />
         </Suspense>
 
         <Button

@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  where,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, query, orderBy, where } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
 import { IPostState } from "@/types";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";

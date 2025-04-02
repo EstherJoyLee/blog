@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import MarkdownRenderer from "@/components/markdownRenderer/MarkdownRenderer";
+import MarkdownRenderer from "@/app/markdownRenderer/MarkdownRenderer";
 import { setThemeClass } from "@/utils/setThemeClass";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import Image from "next/image";
