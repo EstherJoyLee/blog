@@ -4,7 +4,6 @@ export interface IPostState {
   id: string;
   title?: string;
   content?: string;
-  imageUrl?: string;
   isPublic?: boolean;
   authorUid?: string;
   createdAt?: string | null | Timestamp;

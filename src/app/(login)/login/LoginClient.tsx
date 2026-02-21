@@ -35,7 +35,7 @@ const LoginClient = () => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -116,7 +116,7 @@ const LoginClient = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log("Authenticated as:", user.email);
+        console.log("로그인에 성공했습니다.");
       }
     });
 

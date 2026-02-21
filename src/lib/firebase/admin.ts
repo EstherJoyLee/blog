@@ -46,7 +46,6 @@ export const getPosts = async (
         id: doc.id,
         title: data.title || "제목 없음",
         content: data.content || "내용 없음",
-        imageUrl: data.imageUrl || null,
         isPublic: data.isPublic || false,
         authorUid: data.authorUid || "",
         createdAt: data.createdAt

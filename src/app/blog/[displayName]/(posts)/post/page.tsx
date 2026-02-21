@@ -29,8 +29,6 @@ const PostPage = async ({
     return <p>잘못된 접근입니다.</p>;
   }
 
-  console.log("📌 Resolved PostPage params:", resolvedParams);
-
   // ✅ 쿠키에서 `idToken` 가져오기 (클라이언트에서 로그인한 후 저장된 토큰)
   const cookiesData = await cookies();
   const idToken = cookiesData.get("idToken")?.value || null;
@@ -39,7 +37,6 @@ const PostPage = async ({
   // ✅ 서버에서 Firebase Admin SDK를 사용하여 `idToken` 검증 후 `userUid` 가져오기
   if (idToken) {
     try {
-      console.log("🔁 서버에서 `idToken` 검증 요청 시장...");
       const response = await fetch(`${API_BASE_URL}/api/auth/verify-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

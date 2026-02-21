@@ -5,7 +5,6 @@ import { setThemeClass } from "@/utils/setThemeClass";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./PostListClient.module.scss";
-import Image from "next/image";
 import { IPostState } from "@/types";
 import dynamic from "next/dynamic";
 import Loader from "@/components/loader/Loader";
@@ -64,8 +63,6 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
   const fetchMorePosts = async () => {
     if (loading || !hasMore || !lastVisibleId) return;
     setLoading(true);
-
-    console.log("🚀 fetchMorePosts 실행됨");
 
     try {
       const { auth } = await import("@/firebase/config");
@@ -151,19 +148,6 @@ const PostListClient = ({ initialPosts, displayName }: PostListClientProps) => {
               </h2>
               {openPostIds.includes(post.id) && (
                 <div>
-                  {post.imageUrl && (
-                    <div
-                      style={{ position: "relative", margin: "32px 0 36px" }}
-                    >
-                      <Image
-                        alt={`${post.title} 이미지`}
-                        src={post.imageUrl || ""}
-                        width={200}
-                        height={200}
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                  )}
                   <MarkdownRenderer content={post.content} />
                 </div>
               )}

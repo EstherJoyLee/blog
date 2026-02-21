@@ -9,7 +9,6 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ error: "Missing token" }, { status: 400 });
     }
 
-    // console.log("🔄 `idToken` 검증 시작...");
     const decodedToken = await adminAuth.verifyIdToken(idToken);
     const userUid = decodedToken.uid;
 

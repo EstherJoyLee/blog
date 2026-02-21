@@ -14,7 +14,6 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
-import Image from "next/image";
 import { notFound, useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import styles from "./PostDetail.module.scss";
@@ -85,7 +84,6 @@ const PostDetailClient = () => {
         id: postSnap.id,
         title: postData.title || "제목 없음",
         content: postData.content || "내용 없음",
-        imageUrl: postData.imageUrl || null,
         isPublic: postData.isPublic || false,
         authorUid: postData.authorUid || "",
         createdAt:
@@ -183,21 +181,6 @@ const PostDetailClient = () => {
         />
       </Suspense>
       <div className="commonContent">
-        {isLoading ? (
-          <div className={styles.imageSkeleton} />
-        ) : (
-          <div style={{ position: "relative", margin: "32px 0 36px" }}>
-            {post.imageUrl && (
-              <Image
-                alt={`${post.title} 이미지`}
-                src={post.imageUrl}
-                width={600}
-                height={400}
-              />
-            )}
-          </div>
-        )}
-
         <Suspense fallback={<div className={styles.markdownSkeleton} />}>
           <MarkdownRenderer content={post.content || ""} />
         </Suspense>

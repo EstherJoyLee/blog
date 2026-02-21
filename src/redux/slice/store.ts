@@ -1,11 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-import imageReducer from "./imageSlice";
 import folderReducer from "./folderSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  image: imageReducer,
   folder: folderReducer,
 });
 

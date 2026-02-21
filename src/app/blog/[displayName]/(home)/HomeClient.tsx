@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { setThemeClass } from "@/utils/setThemeClass";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
 import styles from "./HomeClient.module.scss";
@@ -11,7 +10,6 @@ interface Post {
   id: string;
   title: string;
   content: string;
-  imageUrl: string | null;
   createdAt: string | null;
 }
 
@@ -37,17 +35,8 @@ const HomeClient = ({ initialPosts, displayName }: HomeClientProps) => {
       <h1 className="commonTitle">최신 게시물</h1>
       <div className={`commonContent ${styles.postContent}`}>
         {initialPosts.length > 0 ? (
-          initialPosts.map((post, index) => (
+          initialPosts.map((post) => (
             <div key={post.id} className={styles.postItem}>
-              <div className={styles.postImage}>
-                <Image
-                  alt={`${post.title} 이미지`}
-                  src={post.imageUrl || "/images/default.jpeg"}
-                  width={200}
-                  height={200}
-                  priority={index === 0}
-                />
-              </div>
               <h2
                 onClick={() =>
                   router.push(`/blog/${displayName}/post/${post.id}`)

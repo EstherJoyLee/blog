@@ -2,15 +2,12 @@
 
 import { auth, db } from "@/firebase/config";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
-import { setPublicUrl } from "@/redux/slice/imageSlice";
-import { supabase } from "@/supabase/config";
 import { useGetBlogNameFromUrl } from "@/utils/checkBlogNameFromUrl";
-import uploadImage from "@/utils/uploadImage";
 import Button from "@mui/material/Button";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import FormLayout from "@/components/FormLayout/FormLayout";
 import Input from "@/components/FormLayout/Input/Input";
 import FolderSelect from "@/components/folders/FolderSelect";
@@ -23,12 +20,9 @@ const EditPostClient = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
   const [isPublic, setIsPublic] = useState(false);
-  const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [selectedFolder, setSelectedFolder] = useState<string>("");
 
-  const dispatch = useDispatch();
   const router = useRouter();
   const blogUrl = useGetBlogNameFromUrl();
 
@@ -49,7 +43,6 @@ const EditPostClient = () => {
         setTitle(postData.title);
         setContent(postData.content);
         setIsPublic(postData.isPublic);
-        setCurrentImageUrl(postData.imageUrl);
         setSelectedFolder(postData.folderId || ""); // ✅ 기존 폴더 ID 설정
       } else {
         alert("게시물을 찾을 수 없습니다.");
@@ -71,20 +64,10 @@ const EditPostClient = () => {
         throw new Error("사용자가 로그인하지 않았습니다.");
       }
 
-      let imageUrl = currentImageUrl; // 기존 이미지 유지
-      if (image) {
-        const uploadedUrl = await uploadImage(image, "postImages", "images/");
-        if (uploadedUrl) {
-          imageUrl = uploadedUrl;
-          dispatch(setPublicUrl(imageUrl));
-        }
-      }
-
       const postRef = doc(db, "posts", postId);
       await updateDoc(postRef, {
         title,
         content,
-        imageUrl,
         isPublic,
         folderId: selectedFolder, // ✅ 폴더 선택 변경 사항 반영
         updatedAt: new Date(),
@@ -95,12 +78,6 @@ const EditPostClient = () => {
         setLoading(false);
         return;
       }
-      if (image && !imageUrl) {
-        alert("이미지를 업로드해 주세요.");
-        setLoading(false);
-        return;
-      }
-
       alert("게시물이 성공적으로 수정되었습니다.");
       router.push(`/blog/${blogUrl}/post`);
     } catch (error) {
@@ -108,36 +85,6 @@ const EditPostClient = () => {
     } finally {
       setLoading(false);
       console.log("loading:", loading);
-    }
-  };
-
-  // ✅ 이미지 삭제 기능
-  const handleDeleteImage = async () => {
-    if (!currentImageUrl) {
-      alert("삭제할 이미지가 없습니다.");
-      return;
-    }
-
-    try {
-      const imagePath = currentImageUrl.replace(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`,
-        ""
-      );
-
-      const { error } = await supabase.storage
-        .from("postImages")
-        .remove([imagePath]);
-
-      if (error) {
-        console.error("이미지 삭제 오류: ", error);
-        alert("이미지 삭제에 실패했습니다.");
-        return;
-      }
-
-      setCurrentImageUrl("");
-      alert("이미지가 성공적으로 삭제되었습니다.");
-    } catch (error) {
-      console.error("이미지 삭제 중 오류 발생: ", error);
     }
   };
 
@@ -167,15 +114,6 @@ const EditPostClient = () => {
           onChange={(e) => setContent(e.target.value)}
           isRequired
           label="내용 수정"
-        />
-
-        <Input
-          type="file"
-          label="이미지 수정"
-          isEditMode={true} // ✅ 수정 모드일 때만 동작
-          currentImageUrl={currentImageUrl} // ✅ 현재 이미지 URL
-          setImage={setImage} // ✅ 이미지 변경 핸들러
-          handleDeleteImage={handleDeleteImage} // ✅ 이미지 삭제 핸들러
         />
 
         <Input

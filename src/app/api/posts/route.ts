@@ -54,13 +54,12 @@ export const GET = async (req: Request) => {
     }
 
     const postSnapshot = await postsQuery.get();
-    const posts = postSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      title: doc.data().title || "제목 없음",
-      content: doc.data().content || "내용 없음",
-      imageUrl: doc.data().imageUrl || null,
-      isPublic: doc.data().isPublic || false,
-      authorUid: doc.data().authorUid || "",
+      const posts = postSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        title: doc.data().title || "제목 없음",
+        content: doc.data().content || "내용 없음",
+        isPublic: doc.data().isPublic || false,
+        authorUid: doc.data().authorUid || "",
       createdAt: doc.data().createdAt
         ? new Date(doc.data().createdAt.seconds * 1000).toISOString()
         : null,

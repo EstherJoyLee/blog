@@ -23,11 +23,19 @@ const useFetchAllPosts = () => {
 
   useEffect(() => {
     if (!blogUrl) return;
+    let unsubscribe: (() => void) | null = null;
+    let cancelled = false;
+
     const fetchPosts = async () => {
       let postsQuery;
       setIsLoading(true);
       try {
         const authorUid = await getAuthorUidByBlogUrl(blogUrl);
+        if (!authorUid || cancelled) {
+          setAllPosts([]);
+          setIsLoading(false);
+          return;
+        }
         // console.log("😭authorUid:", authorUid);
         // console.log("😭currentUser:", currentUser);
         const postsCollection = collection(db, "posts");
@@ -53,17 +61,28 @@ const useFetchAllPosts = () => {
           );
         }
 
-        const unsubscribe = onSnapshot(postsQuery, (querySnapshot) => {
-          const postList: IPostState[] = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as IPostState[];
+        unsubscribe = onSnapshot(
+          postsQuery,
+          (querySnapshot) => {
+            if (cancelled) return;
+            const postList: IPostState[] = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as IPostState[];
 
-          setAllPosts(postList);
-          setIsLoading(false);
-        });
+            setAllPosts(postList);
+            setIsLoading(false);
+          },
+          (error) => {
+            if (cancelled) return;
+            console.error("❌ 게시물 스냅샷 오류:", error);
+            setIsLoading(false);
+          }
+        );
 
-        return () => unsubscribe();
+        if (cancelled && unsubscribe) {
+          unsubscribe();
+        }
       } catch (error) {
         console.error("❌ 게시물 가져오기 오류:", error);
         setIsLoading(false);
@@ -71,6 +90,10 @@ const useFetchAllPosts = () => {
     };
 
     fetchPosts();
+    return () => {
+      cancelled = true;
+      if (unsubscribe) unsubscribe();
+    };
   }, [blogUrl, currentUser]); // ✅ currentUser가 변경될 때도 실행
 
   return { allPosts, isLoading };

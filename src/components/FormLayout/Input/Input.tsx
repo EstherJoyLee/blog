@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import styles from "./Input.module.scss";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import MarkdownRenderer from "@/components/markdownRenderer/MarkdownRenderer";
 import { setThemeClass } from "@/utils/setThemeClass";
 import { useMountedTheme } from "@/hooks/useMountedTheme";
-import Image from "next/image";
 interface InputProps {
   type: string;
   value?: string;
@@ -24,10 +22,6 @@ interface InputProps {
   error?: string;
   accept?: string;
   checked?: boolean;
-  isEditMode?: boolean;
-  currentImageUrl?: string;
-  setImage?: (file: File | null) => void;
-  handleDeleteImage?: () => void;
   name?: string;
 }
 
@@ -44,10 +38,6 @@ const Input = ({
   error,
   accept,
   checked,
-  isEditMode = false, // 기본값 false
-  currentImageUrl,
-  setImage,
-  handleDeleteImage,
   name,
 }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -78,39 +68,7 @@ const Input = ({
           )}
 
           <div className={styles.input}>
-            {/* ✅ 게시물 수정 모드일 때 이미지 수정 UI 추가 */}
-            {isEditMode &&
-            label === "이미지 수정" &&
-            setImage &&
-            handleDeleteImage ? (
-              <div className={styles.editImage}>
-                <input
-                  type="file"
-                  onChange={(e) => setImage(e.target.files?.[0] || null)}
-                />
-                {currentImageUrl ? (
-                  <div>
-                    <Image
-                      alt="게시물 이미지"
-                      src={currentImageUrl}
-                      width={300}
-                      height={200}
-                      style={{ objectFit: "cover" }}
-                    />
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={handleDeleteImage}
-                      aria-label="이미지 삭제 버튼"
-                    >
-                      이미지 삭제
-                    </Button>
-                  </div>
-                ) : (
-                  <p>이미지를 불러올 수 없습니다.</p>
-                )}
-              </div>
-            ) : label?.includes("내용") ? (
+            {label?.includes("내용") ? (
               <div className={styles.markdownWrapper}>
                 <textarea
                   placeholder={placeholder}
